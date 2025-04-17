@@ -4,10 +4,9 @@ import { prisma } from "@/lib/prisma";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import RecentWorkouts from "@/components/dashboard/RecentWorkouts";
 import RecentMeals from "@/components/dashboard/RecentMeals";
-
-type WorkoutDate = {
-  date: Date;
-};
+import GoalsProgress from "@/components/dashboard/GoalsProgress";
+import ActivityChart from "@/components/dashboard/ActivityChart";
+import { format, subDays } from "date-fns";
 
 export default async function DashboardPage() {
   const session = await getServerSession();
@@ -16,20 +15,23 @@ export default async function DashboardPage() {
     redirect("/auth/signin");
   }
 
-  // Fetch user's data
+  // Fetch user data
   const user = await prisma.user.findUnique({
-    where: { email: session.user.email ?? undefined },
+    where: { email: session.user.email! },
     include: {
+      profile: true,
       workouts: {
-        orderBy: { date: "desc" },
+        orderBy: { completedAt: "desc" },
         take: 5,
-        include: {
-          exercises: true,
-        },
       },
       meals: {
-        orderBy: { date: "desc" },
+        orderBy: { consumedAt: "desc" },
         take: 5,
+      },
+      goals: {
+        where: { completed: false },
+        orderBy: { endDate: "asc" },
+        take: 3,
       },
     },
   });
@@ -38,14 +40,14 @@ export default async function DashboardPage() {
     redirect("/auth/signin");
   }
 
-  // Calculate stats
+  // Calculate total workouts and calories
   const totalWorkouts = await prisma.workout.count({
     where: { userId: user.id },
   });
 
   const totalCaloriesBurned = await prisma.workout.aggregate({
     where: { userId: user.id },
-    _sum: { calories: true },
+    _sum: { caloriesBurned: true },
   });
 
   const totalCaloriesConsumed = await prisma.meal.aggregate({
@@ -53,69 +55,51 @@ export default async function DashboardPage() {
     _sum: { calories: true },
   });
 
-  // Calculate streak (consecutive days with workouts)
-  const recentWorkouts = await prisma.workout.findMany({
-    where: { userId: user.id },
-    orderBy: { date: "desc" },
-    select: { date: true },
-  });
+  // Calculate streak
+  const streakDays = user.profile?.streakDays || 0;
 
-  let streak = 0;
-  if (recentWorkouts.length > 0) {
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-    const yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
+  // Get workout activity for the last 7 days
+  const last7Days = Array.from({ length: 7 }, (_, i) => {
+    const date = subDays(new Date(), i);
+    return format(date, "MMM d");
+  }).reverse();
 
-    // Check if there's a workout today or yesterday to maintain streak
-    const hasRecentWorkout = recentWorkouts.some((workout: WorkoutDate) => {
-      const workoutDate = new Date(workout.date);
-      workoutDate.setHours(0, 0, 0, 0);
-      return workoutDate.getTime() === today.getTime() || workoutDate.getTime() === yesterday.getTime();
-    });
-
-    if (hasRecentWorkout) {
-      streak = 1;
-      let currentDate = yesterday;
-      for (let i = 1; i < recentWorkouts.length; i++) {
-        const workoutDate = new Date(recentWorkouts[i].date);
-        workoutDate.setHours(0, 0, 0, 0);
-        currentDate.setDate(currentDate.getDate() - 1);
-
-        if (workoutDate.getTime() === currentDate.getTime()) {
-          streak++;
-        } else {
-          break;
-        }
-      }
-    }
-  }
+  const workoutsByDay = await Promise.all(
+    last7Days.map(async (date) => {
+      const count = await prisma.workout.count({
+        where: {
+          userId: user.id,
+          completedAt: {
+            gte: new Date(date),
+            lt: new Date(new Date(date).setDate(new Date(date).getDate() + 1)),
+          },
+        },
+      });
+      return { date, count };
+    })
+  );
 
   return (
     <div className="container mx-auto px-4 py-8">
-      <h1 className="mb-8 text-3xl font-bold">Dashboard</h1>
-      
-      <div className="mb-8">
-        <h2 className="mb-4 text-xl font-semibold">Welcome, {user.name || "User"}!</h2>
-        <p className="text-gray-600">
-          Track your fitness journey and stay motivated with your health goals.
-        </p>
-      </div>
+      <h1 className="text-3xl font-bold mb-8">
+        Welcome back, {user.profile?.name || "User"}!
+      </h1>
 
-      <div className="mb-8">
+      <div className="space-y-8">
         <DashboardStats
           totalWorkouts={totalWorkouts}
-          totalCaloriesBurned={totalCaloriesBurned._sum.calories ?? 0}
-          totalCaloriesConsumed={totalCaloriesConsumed._sum.calories ?? 0}
-          streak={streak}
+          totalCaloriesBurned={totalCaloriesBurned._sum.caloriesBurned || 0}
+          totalCaloriesConsumed={totalCaloriesConsumed._sum.calories || 0}
+          streakDays={streakDays}
         />
-      </div>
 
-      <div className="grid gap-8 md:grid-cols-2">
-        <div>
-          <RecentWorkouts workouts={user.workouts} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <ActivityChart workouts={workoutsByDay} />
+          <GoalsProgress goals={user.goals} />
         </div>
-        <div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          <RecentWorkouts workouts={user.workouts} />
           <RecentMeals meals={user.meals} />
         </div>
       </div>

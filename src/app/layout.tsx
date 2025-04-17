@@ -1,33 +1,36 @@
-import "./globals.css";
-import { Inter } from "next/font/google";
-import { getServerSession } from "next-auth";
-import SessionProvider from "@/components/SessionProvider";
+import './globals.css'
+import type { Metadata } from 'next'
+import { Inter } from 'next/font/google'
+import { getServerSession } from "next-auth"
+import { headers } from 'next/headers'
+import AuthProvider from '@/components/AuthProvider'
 import Navbar from "@/components/Navbar";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ['latin'] })
 
-export const metadata = {
-  title: "Health & Fitness Tracker",
-  description: "Track your fitness journey and achieve your health goals",
-};
+export const metadata: Metadata = {
+  title: 'Health & Fitness App',
+  description: 'Track your health and fitness journey',
+}
 
 export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode
 }) {
-  const session = await getServerSession();
+  const session = await getServerSession()
+  const headersList = headers()
 
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SessionProvider session={session}>
+        <AuthProvider session={session}>
           <div className="min-h-screen bg-gray-100">
             <Navbar />
             <main className="container mx-auto px-4 py-8">{children}</main>
           </div>
-        </SessionProvider>
+        </AuthProvider>
       </body>
     </html>
-  );
+  )
 }

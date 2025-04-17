@@ -11,56 +11,44 @@ interface DashboardStatsProps {
   totalWorkouts: number;
   totalCaloriesBurned: number;
   totalCaloriesConsumed: number;
-  streak: number;
+  streakDays: number;
 }
 
 export default function DashboardStats({
   totalWorkouts,
   totalCaloriesBurned,
   totalCaloriesConsumed,
-  streak,
+  streakDays,
 }: DashboardStatsProps) {
-  const stats = [
-    {
-      name: "Total Workouts",
-      value: totalWorkouts,
-      unit: "",
-    },
-    {
-      name: "Calories Burned",
-      value: totalCaloriesBurned,
-      unit: "kcal",
-    },
-    {
-      name: "Calories Consumed",
-      value: totalCaloriesConsumed,
-      unit: "kcal",
-    },
-    {
-      name: "Current Streak",
-      value: streak,
-      unit: "days",
-    },
-  ];
-
   return (
-    <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-      {stats.map((stat) => (
-        <div
-          key={stat.name}
-          className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6"
-        >
-          <dt className="truncate text-sm font-medium text-gray-500">
-            {stat.name}
-          </dt>
-          <dd className="mt-1 text-3xl font-semibold tracking-tight text-gray-900">
-            {stat.value}
-            <span className="ml-1 text-lg font-medium text-gray-500">
-              {stat.unit}
-            </span>
-          </dd>
-        </div>
-      ))}
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-medium text-gray-900">Total Workouts</h3>
+        <p className="mt-2 text-3xl font-bold text-blue-600">{totalWorkouts}</p>
+        <p className="mt-1 text-sm text-gray-500">completed workouts</p>
+      </div>
+
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-medium text-gray-900">Calories Burned</h3>
+        <p className="mt-2 text-3xl font-bold text-green-600">
+          {totalCaloriesBurned.toLocaleString()}
+        </p>
+        <p className="mt-1 text-sm text-gray-500">total calories burned</p>
+      </div>
+
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-medium text-gray-900">Calories Consumed</h3>
+        <p className="mt-2 text-3xl font-bold text-orange-600">
+          {totalCaloriesConsumed.toLocaleString()}
+        </p>
+        <p className="mt-1 text-sm text-gray-500">total calories consumed</p>
+      </div>
+
+      <div className="bg-white rounded-lg shadow p-6">
+        <h3 className="text-lg font-medium text-gray-900">Current Streak</h3>
+        <p className="mt-2 text-3xl font-bold text-purple-600">{streakDays}</p>
+        <p className="mt-1 text-sm text-gray-500">days in a row</p>
+      </div>
     </div>
   );
 } 

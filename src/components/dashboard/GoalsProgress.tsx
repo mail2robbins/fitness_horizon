@@ -1,7 +1,7 @@
 "use client";
 
-import { Goal } from "@prisma/client";
 import { format } from "date-fns";
+import type { Goal } from "@/types/prisma";
 
 interface GoalsProgressProps {
   goals: Goal[];

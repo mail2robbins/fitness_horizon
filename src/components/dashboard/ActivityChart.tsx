@@ -22,69 +22,45 @@ ChartJS.register(
 );
 
 interface WorkoutByDay {
-  date: Date;
-  _count: number;
+  date: string;
+  count: number;
 }
 
 interface ActivityChartProps {
-  workoutsByDay: WorkoutByDay[];
+  workouts: WorkoutByDay[];
 }
 
-export default function ActivityChart({ workoutsByDay }: ActivityChartProps) {
+export default function ActivityChart({ workouts }: ActivityChartProps) {
   const [chartData, setChartData] = useState<any>(null);
 
   useEffect(() => {
-    // Get the last 7 days
-    const last7Days = Array.from({ length: 7 }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - i);
-      return date;
-    }).reverse();
+    if (workouts.length === 0) return;
 
-    // Format dates for labels
-    const labels = last7Days.map((date) => {
-      return date.toLocaleDateString("en-US", { weekday: "short" });
-    });
-
-    // Create data array with workout counts
-    const data = last7Days.map((date) => {
-      const dayStart = new Date(date);
-      dayStart.setHours(0, 0, 0, 0);
-      
-      const dayEnd = new Date(date);
-      dayEnd.setHours(23, 59, 59, 999);
-      
-      const workoutForDay = workoutsByDay.find((workout) => {
-        const workoutDate = new Date(workout.date);
-        return workoutDate >= dayStart && workoutDate <= dayEnd;
-      });
-      
-      return workoutForDay ? workoutForDay._count : 0;
-    });
-
-    setChartData({
-      labels,
+    const data = {
+      labels: workouts.map(workout => workout.date),
       datasets: [
         {
-          label: "Workouts",
-          data,
-          backgroundColor: "rgba(79, 70, 229, 0.6)",
-          borderColor: "rgba(79, 70, 229, 1)",
+          label: 'Workouts',
+          data: workouts.map(workout => workout.count),
+          backgroundColor: 'rgba(59, 130, 246, 0.5)',
+          borderColor: 'rgb(59, 130, 246)',
           borderWidth: 1,
         },
       ],
-    });
-  }, [workoutsByDay]);
+    };
+
+    setChartData(data);
+  }, [workouts]);
 
   const options = {
     responsive: true,
     plugins: {
       legend: {
-        position: "top" as const,
+        position: 'top' as const,
       },
       title: {
         display: true,
-        text: "Activity Last 7 Days",
+        text: 'Workout Activity (Last 7 Days)',
       },
     },
     scales: {
@@ -99,18 +75,15 @@ export default function ActivityChart({ workoutsByDay }: ActivityChartProps) {
 
   if (!chartData) {
     return (
-      <div className="flex h-80 items-center justify-center rounded-lg bg-white p-6 shadow">
-        <p className="text-gray-500">Loading chart data...</p>
+      <div className="bg-white rounded-lg shadow p-6">
+        <p className="text-gray-600">Loading activity data...</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg bg-white p-6 shadow">
-      <h3 className="mb-4 text-lg font-medium">Activity Chart</h3>
-      <div className="h-80">
-        <Bar options={options} data={chartData} />
-      </div>
+    <div className="bg-white rounded-lg shadow p-6">
+      <Bar options={options} data={chartData} />
     </div>
   );
 } 
