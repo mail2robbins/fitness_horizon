@@ -19,16 +19,15 @@ export default async function RootLayout({
   children: React.ReactNode
 }) {
   const session = await getServerSession()
-  const headersList = headers()
 
   return (
     <html lang="en">
       <body className={inter.className}>
         <AuthProvider session={session}>
-          <div className="min-h-screen bg-gray-100">
-            <Navbar />
-            <main className="container mx-auto px-4 py-8">{children}</main>
-          </div>
+          <Navbar />
+          <main className="pt-16 min-h-screen">
+            {children}
+          </main>
         </AuthProvider>
       </body>
     </html>
