@@ -23,10 +23,10 @@ const mealTypes = [
 
 export default function MealForm() {
   const router = useRouter();
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState<MealFormData>({
     name: "",
-    type: "",
+    type: "BREAKFAST",
     calories: "",
     protein: "",
     carbs: "",
@@ -34,9 +34,9 @@ export default function MealForm() {
     notes: "",
   });
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setIsLoading(true);
 
     try {
       const response = await fetch("/api/meals", {
@@ -44,39 +44,41 @@ export default function MealForm() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
-          ...formData,
-          calories: parseInt(formData.calories),
-          protein: parseInt(formData.protein),
-          carbs: parseInt(formData.carbs),
-          fat: parseInt(formData.fat),
-          consumedAt: new Date().toISOString(),
-        }),
+        body: JSON.stringify(formData),
       });
 
       if (!response.ok) {
-        throw new Error("Failed to log meal");
+        throw new Error("Failed to create meal");
       }
 
-      router.push("/dashboard");
       router.refresh();
+      setFormData({
+        name: "",
+        type: "BREAKFAST",
+        calories: "",
+        protein: "",
+        carbs: "",
+        fat: "",
+        notes: "",
+      });
     } catch (error) {
-      console.error("Error logging meal:", error);
-      alert("Failed to log meal. Please try again.");
+      console.error("Error creating meal:", error);
     } finally {
-      setIsSubmitting(false);
+      setIsLoading(false);
     }
   };
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const handleCancel = () => {
+    router.push("/meals");
+  };
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-6">
+    <form onSubmit={handleSubmit} className="space-y-4">
       <div>
         <label htmlFor="name" className="block text-sm font-medium text-gray-700">
           Meal Name
@@ -88,7 +90,7 @@ export default function MealForm() {
           value={formData.name}
           onChange={handleChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
         />
       </div>
 
@@ -102,14 +104,13 @@ export default function MealForm() {
           value={formData.type}
           onChange={handleChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
         >
-          <option value="">Select a type</option>
-          {mealTypes.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
+          <option value="BREAKFAST">Breakfast</option>
+          <option value="LUNCH">Lunch</option>
+          <option value="DINNER">Dinner</option>
+          <option value="SNACK">Snack</option>
+          <option value="OTHER">Other</option>
         </select>
       </div>
 
@@ -125,63 +126,61 @@ export default function MealForm() {
           onChange={handleChange}
           required
           min="0"
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
         />
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div>
-          <label htmlFor="protein" className="block text-sm font-medium text-gray-700">
-            Protein (g)
-          </label>
-          <input
-            type="number"
-            id="protein"
-            name="protein"
-            value={formData.protein}
-            onChange={handleChange}
-            required
-            min="0"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
+      <div>
+        <label htmlFor="protein" className="block text-sm font-medium text-gray-700">
+          Protein (g)
+        </label>
+        <input
+          type="number"
+          id="protein"
+          name="protein"
+          value={formData.protein}
+          onChange={handleChange}
+          required
+          min="0"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
 
-        <div>
-          <label htmlFor="carbs" className="block text-sm font-medium text-gray-700">
-            Carbs (g)
-          </label>
-          <input
-            type="number"
-            id="carbs"
-            name="carbs"
-            value={formData.carbs}
-            onChange={handleChange}
-            required
-            min="0"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
+      <div>
+        <label htmlFor="carbs" className="block text-sm font-medium text-gray-700">
+          Carbs (g)
+        </label>
+        <input
+          type="number"
+          id="carbs"
+          name="carbs"
+          value={formData.carbs}
+          onChange={handleChange}
+          required
+          min="0"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
+      </div>
 
-        <div>
-          <label htmlFor="fat" className="block text-sm font-medium text-gray-700">
-            Fat (g)
-          </label>
-          <input
-            type="number"
-            id="fat"
-            name="fat"
-            value={formData.fat}
-            onChange={handleChange}
-            required
-            min="0"
-            className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-          />
-        </div>
+      <div>
+        <label htmlFor="fat" className="block text-sm font-medium text-gray-700">
+          Fat (g)
+        </label>
+        <input
+          type="number"
+          id="fat"
+          name="fat"
+          value={formData.fat}
+          onChange={handleChange}
+          required
+          min="0"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+        />
       </div>
 
       <div>
         <label htmlFor="notes" className="block text-sm font-medium text-gray-700">
-          Notes (optional)
+          Notes
         </label>
         <textarea
           id="notes"
@@ -189,17 +188,24 @@ export default function MealForm() {
           value={formData.notes}
           onChange={handleChange}
           rows={3}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
         />
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end space-x-3">
+        <button
+          type="button"
+          onClick={handleCancel}
+          className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Cancel
+        </button>
         <button
           type="submit"
-          disabled={isSubmitting}
-          className="inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+          disabled={isLoading}
+          className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50"
         >
-          {isSubmitting ? "Logging..." : "Log Meal"}
+          {isLoading ? "Creating..." : "Create Meal"}
         </button>
       </div>
     </form>

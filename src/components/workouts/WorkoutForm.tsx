@@ -3,18 +3,13 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-interface WorkoutFormProps {
-  onSubmit?: (workout: any) => void;
-}
-
-export default function WorkoutForm({ onSubmit }: WorkoutFormProps) {
+export default function WorkoutForm() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    workoutType: "",
+    type: "",
     duration: "",
-    exercises: "",
-    calories: "",
+    caloriesBurned: "",
     notes: "",
   });
 
@@ -42,14 +37,8 @@ export default function WorkoutForm({ onSubmit }: WorkoutFormProps) {
         throw new Error("Failed to create workout");
       }
 
-      const workout = await response.json();
-
-      if (onSubmit) {
-        onSubmit(workout);
-      } else {
-        router.push("/workouts");
-        router.refresh();
-      }
+      router.push("/workouts");
+      router.refresh();
     } catch (error) {
       console.error("Error creating workout:", error);
       // You might want to show an error message to the user here
@@ -58,19 +47,23 @@ export default function WorkoutForm({ onSubmit }: WorkoutFormProps) {
     }
   };
 
+  const handleCancel = () => {
+    router.push("/workouts");
+  };
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
         <label
-          htmlFor="workoutType"
+          htmlFor="type"
           className="block text-sm font-medium text-gray-700"
         >
           Workout Type
         </label>
         <select
-          id="workoutType"
-          name="workoutType"
-          value={formData.workoutType}
+          id="type"
+          name="type"
+          value={formData.type}
           onChange={handleChange}
           required
           className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
@@ -105,35 +98,16 @@ export default function WorkoutForm({ onSubmit }: WorkoutFormProps) {
 
       <div>
         <label
-          htmlFor="exercises"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Exercises
-        </label>
-        <textarea
-          id="exercises"
-          name="exercises"
-          value={formData.exercises}
-          onChange={handleChange}
-          required
-          rows={4}
-          className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-          placeholder="List your exercises, sets, reps, and weights..."
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="calories"
+          htmlFor="caloriesBurned"
           className="block text-sm font-medium text-gray-700"
         >
           Calories Burned
         </label>
         <input
           type="number"
-          id="calories"
-          name="calories"
-          value={formData.calories}
+          id="caloriesBurned"
+          name="caloriesBurned"
+          value={formData.caloriesBurned}
           onChange={handleChange}
           required
           min="0"
@@ -159,7 +133,14 @@ export default function WorkoutForm({ onSubmit }: WorkoutFormProps) {
         />
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end space-x-3">
+        <button
+          type="button"
+          onClick={handleCancel}
+          className="inline-flex justify-center rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+        >
+          Cancel
+        </button>
         <button
           type="submit"
           disabled={isLoading}

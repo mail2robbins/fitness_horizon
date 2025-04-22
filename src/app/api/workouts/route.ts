@@ -6,36 +6,27 @@ export async function POST(request: Request) {
   try {
     const session = await getServerSession();
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const body = await request.json();
-    const { workoutType, duration, exercises, calories, notes } = body;
+    const { type, duration, caloriesBurned, notes } = body;
 
     // Validate required fields
-    if (!workoutType || !duration || !exercises || !calories) {
+    if (!type || !duration || !caloriesBurned) {
       return new NextResponse("Missing required fields", { status: 400 });
-    }
-
-    // Get user ID from email
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
-
-    if (!user) {
-      return new NextResponse("User not found", { status: 404 });
     }
 
     // Create workout
     const workout = await prisma.workout.create({
       data: {
-        userId: user.id,
-        workoutType,
+        userId: session.user.id,
+        type,
         duration: parseInt(duration),
-        exercises,
-        caloriesBurned: parseInt(calories),
+        caloriesBurned: parseInt(caloriesBurned),
         notes,
+        completedAt: new Date(),
       },
     });
 
@@ -50,21 +41,13 @@ export async function GET(request: Request) {
   try {
     const session = await getServerSession();
 
-    if (!session?.user?.email) {
+    if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { email: session.user.email },
-    });
-
-    if (!user) {
-      return new NextResponse("User not found", { status: 404 });
-    }
-
     const workouts = await prisma.workout.findMany({
-      where: { userId: user.id },
-      orderBy: { createdAt: "desc" },
+      where: { userId: session.user.id },
+      orderBy: { completedAt: "desc" },
     });
 
     return NextResponse.json(workouts);
