@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/lib/auth";
 import DashboardStats from "@/components/dashboard/DashboardStats";
 import RecentWorkouts from "@/components/dashboard/RecentWorkouts";
 import RecentMeals from "@/components/dashboard/RecentMeals";
@@ -9,7 +10,7 @@ import ActivityChart from "@/components/dashboard/ActivityChart";
 import { format, subDays } from "date-fns";
 
 export default async function DashboardPage() {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
 
   if (!session?.user) {
     redirect("/auth/signin");

@@ -1,6 +1,7 @@
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
+import { authOptions } from "@/lib/auth";
 
 interface MealCreateBody {
   name: string;
@@ -14,7 +15,7 @@ interface MealCreateBody {
 
 export async function POST(request: Request) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -25,13 +26,12 @@ export async function POST(request: Request) {
     const meal = await prisma.meal.create({
       data: {
         name,
-        type,
+        description: notes,
+        date: new Date(),
         calories: parseInt(calories),
-        protein: parseInt(protein),
-        carbs: parseInt(carbs),
-        fat: parseInt(fat),
-        notes,
-        consumedAt: new Date(),
+        protein: parseFloat(protein),
+        carbs: parseFloat(carbs),
+        fat: parseFloat(fat),
         userId: session.user.id,
       },
     });
@@ -45,7 +45,7 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session?.user?.id) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
@@ -55,7 +55,7 @@ export async function GET(request: Request) {
         userId: session.user.id,
       },
       orderBy: {
-        consumedAt: "desc",
+        date: "desc",
       },
     });
 

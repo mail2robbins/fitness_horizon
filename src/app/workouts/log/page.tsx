@@ -1,9 +1,10 @@
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import WorkoutForm from "@/components/workouts/WorkoutForm";
+import { authOptions } from "@/lib/auth";
 
 export default async function LogWorkoutPage() {
-  const session = await getServerSession();
+  const session = await getServerSession(authOptions);
 
   if (!session?.user) {
     redirect("/auth/signin");
