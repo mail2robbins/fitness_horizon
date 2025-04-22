@@ -9,63 +9,56 @@ interface RecentWorkoutsProps {
 }
 
 export default function RecentWorkouts({ workouts }: RecentWorkoutsProps) {
-  if (workouts.length === 0) {
-    return (
-      <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Recent Workouts</h2>
-        <p className="text-gray-600 mb-4">No workouts have been logged yet.</p>
-        <div className="flex gap-4">
-          <Link 
-            href="/workouts/log" 
-            className="text-blue-600 hover:text-blue-800 font-medium"
-          >
-            Log a workout
-          </Link>
-          <Link 
-            href="/workouts" 
-            className="text-blue-600 hover:text-blue-800 font-medium"
-          >
-            View all workouts
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="bg-white rounded-lg shadow p-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold">Recent Workouts</h2>
-        <Link 
-          href="/workouts" 
-          className="text-blue-600 hover:text-blue-800 font-medium"
+        <Link
+          href="/workouts/all"
+          className="text-sm text-indigo-600 hover:text-indigo-900"
         >
-          View all
+          View all →
         </Link>
       </div>
-      <div className="space-y-4">
-        {workouts.map((workout) => (
-          <div key={workout.id} className="border-b pb-4 last:border-b-0">
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-medium">{workout.type}</h3>
-                <p className="text-sm text-gray-500">
-                  {format(new Date(workout.completedAt), 'PPp')}
-                </p>
+
+      {workouts.length > 0 ? (
+        <div className="space-y-4">
+          {workouts.map((workout) => (
+            <div
+              key={workout.id}
+              className="border-b border-gray-200 last:border-0 pb-4 last:pb-0"
+            >
+              <div className="flex justify-between items-start">
+                <div>
+                  <h3 className="font-medium text-gray-900">
+                    {workout.type} Workout
+                  </h3>
+                  {workout.notes && (
+                    <p className="text-sm text-gray-500">{workout.notes}</p>
+                  )}
+                </div>
+                <span className="text-sm text-gray-500">
+                  {format(new Date(workout.completedAt), "MMM d")}
+                </span>
               </div>
-              <div className="text-right">
-                <p className="font-medium">{workout.duration} minutes</p>
-                <p className="text-sm text-gray-500">
-                  {workout.caloriesBurned} calories burned
-                </p>
+              <div className="mt-2 flex gap-4 text-sm text-gray-600">
+                <span>{workout.duration} min</span>
+                <span>{workout.caloriesBurned} calories</span>
               </div>
             </div>
-            {workout.notes && (
-              <p className="mt-2 text-sm text-gray-600">{workout.notes}</p>
-            )}
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-4">
+          <p className="text-gray-500">No workouts logged yet</p>
+          <Link
+            href="/workouts/log"
+            className="text-indigo-600 hover:text-indigo-900 text-sm mt-2 inline-block"
+          >
+            Log your first workout
+          </Link>
+        </div>
+      )}
     </div>
   );
 } 
