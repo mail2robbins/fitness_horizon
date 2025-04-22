@@ -26,12 +26,13 @@ export async function POST(request: Request) {
     const meal = await prisma.meal.create({
       data: {
         name,
-        description: notes,
-        date: new Date(),
+        type,
         calories: parseInt(calories),
         protein: parseFloat(protein),
         carbs: parseFloat(carbs),
         fat: parseFloat(fat),
+        notes,
+        consumedAt: new Date(),
         userId: session.user.id,
       },
     });
@@ -55,7 +56,7 @@ export async function GET(request: Request) {
         userId: session.user.id,
       },
       orderBy: {
-        date: "desc",
+        consumedAt: "desc",
       },
     });
 
