@@ -6,6 +6,7 @@ import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useSession, signOut } from "next-auth/react";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 function classNames(...classes: string[]) {
   return classes.filter(Boolean).join(" ");
@@ -13,13 +14,15 @@ function classNames(...classes: string[]) {
 
 export default function Navbar() {
   const { data: session } = useSession();
+  const pathname = usePathname();
 
   const navigation = [
-    { name: "Dashboard", href: "/", current: true },
-    { name: "Workouts", href: "/workouts", current: false },
-    { name: "Nutrition", href: "/nutrition", current: false },
-    { name: "Progress", href: "/progress", current: false },
-    { name: "Community", href: "/community", current: false },
+    { name: "Dashboard", href: "/" },
+    { name: "Workouts", href: "/workouts" },
+    { name: "Nutrition", href: "/nutrition" },
+    { name: "Progress", href: "/progress" },
+    { name: "Community", href: "/community" },
+    { name: "About", href: "/about" },
   ];
 
   return (
@@ -31,24 +34,28 @@ export default function Navbar() {
               <div className="flex">
                 <div className="flex flex-shrink-0 items-center">
                   <Link href="/" className="text-xl font-bold text-indigo-600">
-                    HealthFit
+                    Health-Horizon
                   </Link>
                 </div>
                 <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-                  {navigation.map((item) => (
-                    <Link
-                      key={item.name}
-                      href={item.href}
-                      className={classNames(
-                        item.current
-                          ? "border-indigo-500 text-gray-900"
-                          : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
-                        "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
-                      )}
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
+                  {navigation.map((item) => {
+                    const isActive = pathname === item.href || 
+                                    (item.href !== "/" && pathname?.startsWith(item.href));
+                    return (
+                      <Link
+                        key={item.name}
+                        href={item.href}
+                        className={classNames(
+                          isActive
+                            ? "border-indigo-500 text-gray-900"
+                            : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700",
+                          "inline-flex items-center border-b-2 px-1 pt-1 text-sm font-medium"
+                        )}
+                      >
+                        {item.name}
+                      </Link>
+                    );
+                  })}
                 </div>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:items-center">
@@ -135,21 +142,25 @@ export default function Navbar() {
 
           <Disclosure.Panel className="sm:hidden">
             <div className="space-y-1 pb-3 pt-2">
-              {navigation.map((item) => (
-                <Disclosure.Button
-                  key={item.name}
-                  as={Link}
-                  href={item.href}
-                  className={classNames(
-                    item.current
-                      ? "bg-indigo-50 border-indigo-500 text-indigo-700"
-                      : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
-                    "block border-l-4 py-2 pl-3 pr-4 text-base font-medium"
-                  )}
-                >
-                  {item.name}
-                </Disclosure.Button>
-              ))}
+              {navigation.map((item) => {
+                const isActive = pathname === item.href || 
+                                (item.href !== "/" && pathname?.startsWith(item.href));
+                return (
+                  <Disclosure.Button
+                    key={item.name}
+                    as={Link}
+                    href={item.href}
+                    className={classNames(
+                      isActive
+                        ? "bg-indigo-50 border-indigo-500 text-indigo-700"
+                        : "border-transparent text-gray-600 hover:bg-gray-50 hover:border-gray-300 hover:text-gray-800",
+                      "block border-l-4 py-2 pl-3 pr-4 text-base font-medium"
+                    )}
+                  >
+                    {item.name}
+                  </Disclosure.Button>
+                );
+              })}
             </div>
             <div className="border-t border-gray-200 pb-3 pt-4">
               {session ? (

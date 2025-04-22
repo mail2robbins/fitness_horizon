@@ -1,26 +1,26 @@
-import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 
 export async function POST(request: Request) {
   try {
     const session = await getServerSession();
 
-    if (!session?.user) {
+    if (!session?.user?.email) {
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
     const body = await request.json();
-    const { type, duration, caloriesBurned, notes, completedAt } = body;
+    const { workoutType, duration, exercises, calories, notes } = body;
 
     // Validate required fields
-    if (!type || !duration || !caloriesBurned) {
+    if (!workoutType || !duration || !exercises || !calories) {
       return new NextResponse("Missing required fields", { status: 400 });
     }
 
-    // Get user
+    // Get user ID from email
     const user = await prisma.user.findUnique({
-      where: { email: session.user.email! },
+      where: { email: session.user.email },
     });
 
     if (!user) {
@@ -30,71 +30,46 @@ export async function POST(request: Request) {
     // Create workout
     const workout = await prisma.workout.create({
       data: {
-        type,
-        duration,
-        caloriesBurned,
+        userId: user.id,
+        workoutType,
+        duration: parseInt(duration),
+        exercises,
+        caloriesBurned: parseInt(calories),
         notes,
-        completedAt: new Date(completedAt),
-        userId: user.id,
       },
     });
-
-    // Update user's streak
-    const today = new Date();
-    today.setHours(0, 0, 0, 0);
-
-    const lastWorkout = await prisma.workout.findFirst({
-      where: {
-        userId: user.id,
-        completedAt: {
-          lt: today,
-        },
-      },
-      orderBy: {
-        completedAt: "desc",
-      },
-    });
-
-    if (lastWorkout) {
-      const lastWorkoutDate = new Date(lastWorkout.completedAt);
-      lastWorkoutDate.setHours(0, 0, 0, 0);
-
-      const daysSinceLastWorkout = Math.floor(
-        (today.getTime() - lastWorkoutDate.getTime()) / (1000 * 60 * 60 * 24)
-      );
-
-      if (daysSinceLastWorkout === 1) {
-        // Consecutive day, increment streak
-        await prisma.profile.update({
-          where: { userId: user.id },
-          data: {
-            streakDays: {
-              increment: 1,
-            },
-          },
-        });
-      } else if (daysSinceLastWorkout > 1) {
-        // Streak broken, reset to 1
-        await prisma.profile.update({
-          where: { userId: user.id },
-          data: {
-            streakDays: 1,
-          },
-        });
-      }
-    } else {
-      // First workout, set streak to 1
-      await prisma.profile.update({
-        where: { userId: user.id },
-        data: {
-          streakDays: 1,
-        },
-      });
-    }
 
     return NextResponse.json(workout);
   } catch (error) {
     console.error("Error creating workout:", error);
+    return new NextResponse("Internal Server Error", { status: 500 });
+  }
+}
+
+export async function GET(request: Request) {
+  try {
+    const session = await getServerSession();
+
+    if (!session?.user?.email) {
+      return new NextResponse("Unauthorized", { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { email: session.user.email },
+    });
+
+    if (!user) {
+      return new NextResponse("User not found", { status: 404 });
+    }
+
+    const workouts = await prisma.workout.findMany({
+      where: { userId: user.id },
+      orderBy: { createdAt: "desc" },
+    });
+
+    return NextResponse.json(workouts);
+  } catch (error) {
+    console.error("Error fetching workouts:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 } 

@@ -19,36 +19,42 @@ const handler = NextAuth({
   pages: {
     signIn: "/auth/signin",
   },
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: "jwt",
+  },
   callbacks: {
-    async session({ session, user }) {
-      // Add user ID to the session
+    async session({ session, token }) {
       if (session.user) {
-        session.user.id = user.id;
+        session.user.id = token.sub as string;
       }
       return session;
     },
     async signIn({ user, account, profile }) {
-      // Check if user exists
-      const existingUser = await prisma.user.findUnique({
-        where: { email: user.email || "" },
-      });
-
-      // If user doesn't exist, create a profile
-      if (!existingUser) {
-        await prisma.profile.create({
-          data: {
-            userId: user.id,
-            fitnessLevel: "beginner",
-            preferredUnits: "metric",
-          },
+      try {
+        // Check if user exists
+        const existingUser = await prisma.user.findUnique({
+          where: { email: user.email || "" },
+          include: { profile: true },
         });
-      }
 
-      return true;
+        // If user exists but doesn't have a profile, create one
+        if (existingUser && !existingUser.profile) {
+          await prisma.profile.create({
+            data: {
+              userId: existingUser.id,
+              name: existingUser.name,
+              streakDays: 0,
+            },
+          });
+        }
+
+        return true;
+      } catch (error) {
+        console.error("Error in signIn callback:", error);
+        return true; // Still allow sign in even if profile creation fails
+      }
     },
-  },
-  session: {
-    strategy: "database",
   },
 });
 
