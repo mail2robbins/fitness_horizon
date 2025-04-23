@@ -11,7 +11,7 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { useTheme } from "next-themes";
+import { useTheme } from "@/components/ThemeProvider";
 
 ChartJS.register(
   CategoryScale,
@@ -33,8 +33,8 @@ interface ActivityChartProps {
 
 export default function ActivityChart({ workouts }: ActivityChartProps) {
   const [chartData, setChartData] = useState<any>(null);
-  const { theme } = useTheme();
-  const isDark = theme === "dark";
+  const { theme, systemTheme } = useTheme();
+  const isDark = theme === "dark" || (theme === "system" && systemTheme === "dark");
 
   useEffect(() => {
     if (workouts.length === 0) return;
