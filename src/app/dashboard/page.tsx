@@ -81,29 +81,31 @@ export default async function DashboardPage() {
   );
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-3xl font-bold mb-8">
-        Welcome back, {user.profile?.name || "User"}!
-      </h1>
+    <main className="min-h-screen bg-white dark:bg-gray-900">
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
+          Welcome back, {user.profile?.name || "User"}!
+        </h1>
 
-      <div className="space-y-8">
-        <DashboardStats
-          totalWorkouts={totalWorkouts}
-          totalCaloriesBurned={totalCaloriesBurned._sum.caloriesBurned || 0}
-          totalCaloriesConsumed={totalCaloriesConsumed._sum.calories || 0}
-          streakDays={streakDays}
-        />
+        <div className="space-y-8">
+          <DashboardStats
+            totalWorkouts={totalWorkouts}
+            totalCaloriesBurned={totalCaloriesBurned._sum.caloriesBurned || 0}
+            totalCaloriesConsumed={totalCaloriesConsumed._sum.calories || 0}
+            streakDays={streakDays}
+          />
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <ActivityChart workouts={workoutsByDay} />
-          <GoalsProgress goals={user.goals} />
-        </div>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <ActivityChart workouts={workoutsByDay} />
+            <GoalsProgress goals={user.goals} />
+          </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <RecentWorkouts workouts={user.workouts} />
-          <RecentMeals meals={user.meals} />
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <RecentWorkouts workouts={user.workouts} />
+            <RecentMeals meals={user.meals} />
+          </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 } 

@@ -1,15 +1,15 @@
 export default function FeaturesPage() {
   return (
-    <div className="bg-white py-24 sm:py-32">
+    <main className="min-h-screen bg-white dark:bg-gray-900 py-24 sm:py-32">
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="mx-auto max-w-2xl lg:text-center">
-          <h2 className="text-base font-semibold leading-7 text-indigo-600">
+          <h2 className="text-base font-semibold leading-7 text-indigo-600 dark:text-indigo-400">
             Everything you need
           </h2>
-          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-4xl">
             Features that empower your fitness journey
           </p>
-          <p className="mt-6 text-lg leading-8 text-gray-600">
+          <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
             Our platform provides all the tools you need to track, analyze, and
             improve your health and fitness goals.
           </p>
@@ -18,14 +18,14 @@ export default function FeaturesPage() {
           <dl className="grid max-w-xl grid-cols-1 gap-x-8 gap-y-16 lg:max-w-none lg:grid-cols-3">
             {features.map((feature) => (
               <div key={feature.name} className="flex flex-col">
-                <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-gray-900">
+                <dt className="flex items-center gap-x-3 text-base font-semibold leading-7 text-gray-900 dark:text-white">
                   <feature.icon
-                    className="h-5 w-5 flex-none text-indigo-600"
+                    className="h-5 w-5 flex-none text-indigo-600 dark:text-indigo-400"
                     aria-hidden="true"
                   />
                   {feature.name}
                 </dt>
-                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600">
+                <dd className="mt-4 flex flex-auto flex-col text-base leading-7 text-gray-600 dark:text-gray-300">
                   <p className="flex-auto">{feature.description}</p>
                 </dd>
               </div>
@@ -33,7 +33,7 @@ export default function FeaturesPage() {
           </dl>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 
