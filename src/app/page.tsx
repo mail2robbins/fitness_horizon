@@ -5,14 +5,14 @@ export default async function Home() {
   const session = await getServerSession();
 
   return (
-    <div className="bg-white">
-      <div className="relative isolate px-6 pt-14 lg:px-8">
-        <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+    <main className="min-h-screen bg-white dark:bg-gray-900">
+      <div className="relative isolate px-6 lg:px-8">
+        <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:py-32">
           <div className="text-center">
-            <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-6xl">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 dark:text-white sm:text-6xl">
               Transform Your Health Journey
             </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600">
+            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
               Track your workouts, monitor your nutrition, and achieve your fitness
               goals with our comprehensive health and fitness platform.
             </p>
@@ -34,7 +34,7 @@ export default async function Home() {
               )}
               <Link
                 href="/features"
-                className="text-sm font-semibold leading-6 text-gray-900"
+                className="text-sm font-semibold leading-6 text-gray-900 dark:text-gray-100"
               >
                 Learn more <span aria-hidden="true">→</span>
               </Link>
@@ -42,7 +42,7 @@ export default async function Home() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 
