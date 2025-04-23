@@ -25,7 +25,10 @@ export default async function MealsPage() {
   return (
     <div className="container mx-auto px-4 py-8 bg-white dark:bg-gray-900">
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Meals</h1>
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Meals</h1>
+          <p className="text-gray-600 dark:text-gray-400 mt-1">Your complete meal history</p>
+        </div>
         <Link
           href="/meals/log"
           className="bg-indigo-600 dark:bg-indigo-500 text-white px-4 py-2 rounded-md hover:bg-indigo-700 dark:hover:bg-indigo-600 transition-colors"
