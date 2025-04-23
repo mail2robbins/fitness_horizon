@@ -4,7 +4,9 @@ import { Inter } from 'next/font/google'
 import { getServerSession } from "next-auth"
 import { headers } from 'next/headers'
 import AuthProvider from '@/components/AuthProvider'
+import { authOptions } from "@/lib/auth"
 import Navbar from "@/components/Navbar";
+import { ThemeProvider } from "@/components/ThemeProvider"
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -18,17 +20,21 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode
 }) {
-  const session = await getServerSession()
+  const session = await getServerSession(authOptions)
 
   return (
-    <html lang="en">
-      <body className={inter.className}>
-        <AuthProvider session={session}>
-          <Navbar />
-          <main className="pt-16 min-h-screen">
-            {children}
-          </main>
-        </AuthProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.className} min-h-screen bg-background text-foreground`}>
+        <ThemeProvider>
+          <AuthProvider session={session}>
+            <div className="flex min-h-screen flex-col">
+              <Navbar />
+              <main className="flex-1 container mx-auto px-4 py-8 pt-8">
+                {children}
+              </main>
+            </div>
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
