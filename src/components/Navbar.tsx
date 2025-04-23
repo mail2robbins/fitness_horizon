@@ -55,9 +55,9 @@ export default function Navbar() {
                     href={item.href}
                     className={classNames(
                       isActive(item.href)
-                        ? "border-primary text-foreground"
-                        : "border-transparent text-muted-foreground hover:border-gray-300 hover:text-foreground",
-                      "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium"
+                        ? "border-primary text-primary dark:text-primary dark:border-primary font-semibold"
+                        : "border-transparent text-muted-foreground hover:border-gray-300 hover:text-foreground dark:hover:text-gray-300",
+                      "inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium transition-colors duration-200"
                     )}
                   >
                     {item.name}
