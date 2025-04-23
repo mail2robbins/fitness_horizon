@@ -24,12 +24,12 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${inter.className} min-h-screen bg-background text-foreground`}>
-        <ThemeProvider>
+      <body className={`${inter.className} min-h-screen bg-background text-foreground antialiased`}>
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <AuthProvider session={session}>
-            <div className="flex min-h-screen flex-col">
+            <div className="relative flex min-h-screen flex-col">
               <Navbar />
-              <main className="flex-1 container mx-auto px-4 py-8 pt-8">
+              <main className="flex-1 container mx-auto px-4 py-8 pt-24">
                 {children}
               </main>
             </div>
