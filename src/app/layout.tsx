@@ -11,7 +11,7 @@ import { ThemeProvider } from "@/components/ThemeProvider"
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'Health & Fitness App',
+  title: 'Fitness Horizon',
   description: 'Track your health and fitness journey',
 }
 

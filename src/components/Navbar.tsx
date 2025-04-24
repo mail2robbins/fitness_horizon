@@ -42,7 +42,7 @@ export default function Navbar() {
             <div className="flex items-center">
               <div className="flex-shrink-0">
                 <Link href="/" className="text-xl font-bold text-primary">
-                  Health & Fitness
+                  Fitness Horizon
                 </Link>
               </div>
               <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
@@ -67,7 +67,7 @@ export default function Navbar() {
               {session ? (
                 <Menu as="div" className="relative">
                   <div>
-                    <Menu.Button className="flex rounded-full bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    <Menu.Button className="flex rounded-full bg-white/50 dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                       <span className="sr-only">Open user menu</span>
                       <Image
                         className="h-8 w-8 rounded-full"

@@ -7,7 +7,7 @@ export default function AboutPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center py-12">
           <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 sm:text-5xl sm:tracking-tight lg:text-6xl">
-            About HealthFit
+            About Fitness Horizon
           </h1>
           <p className="mt-5 max-w-xl mx-auto text-xl text-gray-600 dark:text-gray-300">
             Your comprehensive health and fitness companion for tracking workouts, nutrition, and achieving your fitness goals.
@@ -58,7 +58,7 @@ export default function AboutPage() {
           <div className="bg-gradient-to-r from-indigo-500/10 to-purple-500/10 dark:from-indigo-500/20 dark:to-purple-500/20 rounded-2xl p-8 backdrop-blur-sm">
             <h2 className="text-3xl font-extrabold text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">Our Mission</h2>
             <p className="mt-6 text-lg text-gray-600 dark:text-gray-300 text-center max-w-3xl mx-auto">
-              At HealthFit, we believe that everyone deserves access to tools that help them lead a healthier life. 
+              At Fitness Horizon, we believe that everyone deserves access to tools that help them lead a healthier life. 
               Our mission is to provide a comprehensive platform that makes tracking your health and fitness journey 
               simple, enjoyable, and effective.
             </p>
