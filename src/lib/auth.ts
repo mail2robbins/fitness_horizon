@@ -35,17 +35,35 @@ export const authOptions: NextAuthOptions = {
         // Check if user exists
         const existingUser = await prisma.user.findUnique({
           where: { email: user.email || "" },
-          include: { profile: true },
+          include: { accounts: true, profile: true },
         });
 
-        // If user exists but doesn't have a profile, create one
-        if (existingUser && !existingUser.profile) {
-          await prisma.profile.create({
-            data: {
-              userId: existingUser.id,
-              name: existingUser.name,
-            },
-          });
+        if (existingUser) {
+          // If the user exists but is trying to sign in with a new provider,
+          // we need to link the new account to the existing user
+          if (account && !existingUser.accounts?.some(acc => acc.provider === account.provider)) {
+            await prisma.account.create({
+              data: {
+                userId: existingUser.id,
+                type: account.type,
+                provider: account.provider,
+                providerAccountId: account.providerAccountId,
+                access_token: account.access_token,
+                token_type: account.token_type,
+                scope: account.scope,
+              },
+            });
+          }
+
+          // Create profile if it doesn't exist
+          if (!existingUser.profile) {
+            await prisma.profile.create({
+              data: {
+                userId: existingUser.id,
+                name: existingUser.name,
+              },
+            });
+          }
         }
 
         return true;
@@ -55,4 +73,4 @@ export const authOptions: NextAuthOptions = {
       }
     },
   },
-}; 
+};
