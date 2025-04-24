@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import { revalidatePath } from 'next/cache';
 
 interface MealCreateBody {
   name: string;
@@ -36,6 +37,10 @@ export async function POST(request: Request) {
         userId: session.user.id,
       },
     });
+
+    // Revalidate the dashboard and meals pages
+    revalidatePath('/dashboard');
+    revalidatePath('/meals');
 
     return NextResponse.json(meal);
   } catch (error) {

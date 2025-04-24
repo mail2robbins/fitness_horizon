@@ -3,12 +3,26 @@
 import { format } from "date-fns";
 import Link from "next/link";
 import type { Meal } from "@/types/prisma";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 interface RecentMealsProps {
   meals: Meal[];
 }
 
 export default function RecentMeals({ meals }: RecentMealsProps) {
+  const router = useRouter();
+
+  // Refresh the component data periodically
+  useEffect(() => {
+    // Refresh data every minute
+    const interval = setInterval(() => {
+      router.refresh();
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [router]);
+
   if (meals.length === 0) {
     return (
       <div>

@@ -35,6 +35,10 @@ export default function WorkoutForm() {
         throw new Error("Failed to create workout");
       }
 
+      // Refresh the router to update all routes
+      router.refresh();
+      
+      // Navigate to workouts page
       router.push("/workouts");
     } catch (error) {
       console.error("Error creating workout:", error);

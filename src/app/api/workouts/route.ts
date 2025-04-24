@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getServerSession } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
+import { revalidatePath } from 'next/cache';
 
 export async function POST(request: Request) {
   try {
@@ -30,6 +31,10 @@ export async function POST(request: Request) {
         completedAt: new Date(),
       },
     });
+
+    // Revalidate the dashboard and workouts pages
+    revalidatePath('/dashboard');
+    revalidatePath('/workouts');
 
     return NextResponse.json(workout);
   } catch (error) {
