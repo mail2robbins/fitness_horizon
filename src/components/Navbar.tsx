@@ -34,9 +34,13 @@ export default function Navbar() {
 
   const isActive = (path: string) => pathname === path;
 
+  const navbarBackground = theme === 'dark' 
+    ? 'bg-gradient-to-r from-indigo-900 via-purple-900 to-gray-900'
+    : 'bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100';
+
   return (
     <div className="h-16 relative">
-      <nav className="fixed top-0 left-0 right-0 bg-white dark:bg-gray-900 border-b border-border shadow-lg z-[9999]">
+      <nav className={`fixed top-0 left-0 right-0 ${navbarBackground} border-b border-border shadow-lg z-[9999]`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
             <div className="flex items-center">
@@ -67,7 +71,7 @@ export default function Navbar() {
               {session ? (
                 <Menu as="div" className="relative">
                   <div>
-                    <Menu.Button className="flex rounded-full bg-white/50 dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
+                    <Menu.Button className="flex rounded-full bg-white/50 dark:bg-gray-900/50 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                       <span className="sr-only">Open user menu</span>
                       <Image
                         className="h-8 w-8 rounded-full"
