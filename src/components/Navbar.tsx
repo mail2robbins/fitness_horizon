@@ -18,16 +18,13 @@ export default function Navbar() {
   const { data: session } = useSession();
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { colors } = useTheme();
+  const { theme } = useTheme();
 
   const navigation = [
     { name: "Features", href: "/features" },
     { name: "Dashboard", href: "/dashboard" },
     { name: "Workouts", href: "/workouts" },
     { name: "Meals", href: "/meals" },
-    // { name: "Nutrition", href: "/nutrition" },
-    // { name: "Progress", href: "/progress" },
-    // { name: "Community", href: "/community" },
     { name: "About", href: "/about" },
   ];
 
@@ -96,8 +93,8 @@ export default function Navbar() {
                           <button
                             onClick={() => signOut()}
                             className={classNames(
-                              active ? "bg-gray-100 dark:bg-gray-800" : "",
-                              "block w-full text-left px-4 py-2 text-sm text-foreground"
+                              active ? "bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50" : "",
+                              "block w-full text-left px-4 py-2 text-sm text-gray-900 dark:text-gray-100 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all duration-300"
                             )}
                           >
                             Sign out
@@ -118,6 +115,56 @@ export default function Navbar() {
             </div>
           </div>
         </div>
+
+        {/* Mobile menu */}
+        <Disclosure as="nav" className="sm:hidden">
+          {({ open }) => (
+            <>
+              <div className="absolute right-0 top-0 mr-4 flex items-center sm:hidden">
+                <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary">
+                  <span className="sr-only">Open main menu</span>
+                  {open ? (
+                    <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+                  ) : (
+                    <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+                  )}
+                </Disclosure.Button>
+              </div>
+              <Disclosure.Panel className="sm:hidden">
+                <div className="pt-2 pb-3 space-y-1">
+                  {navigation.map((item) => (
+                    <Disclosure.Button
+                      key={item.name}
+                      as={Link}
+                      href={item.href}
+                      className={classNames(
+                        isActive(item.href)
+                          ? "bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/50 dark:to-purple-900/50 text-indigo-600 dark:text-indigo-400"
+                          : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800",
+                        "block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                      )}
+                      onClick={handleMenuItemClick}
+                    >
+                      {item.name}
+                    </Disclosure.Button>
+                  ))}
+                  {session && (
+                    <Disclosure.Button
+                      as="button"
+                      onClick={() => {
+                        signOut();
+                        handleMenuItemClick();
+                      }}
+                      className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+                    >
+                      Sign out
+                    </Disclosure.Button>
+                  )}
+                </div>
+              </Disclosure.Panel>
+            </>
+          )}
+        </Disclosure>
       </nav>
     </div>
   );
