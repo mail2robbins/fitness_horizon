@@ -12,6 +12,23 @@ npx prisma generate
 npx prisma db push
 
 
+
+   # 1. Delete the migrations directory
+   rm -r prisma/migrations
+   
+   # 2. Clear Prisma cache
+   rm -r node_modules/.prisma
+   
+   # 3. Reinstall dependencies
+   npm install
+   
+   # 4. Generate Prisma client
+   npx prisma generate
+   
+   # 5. Push the schema to the database
+   npx prisma db push
+
+   
 ```
 
 src/

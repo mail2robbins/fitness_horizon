@@ -13,6 +13,10 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Fitness Horizon',
   description: 'Track your health and fitness journey',
+  icons: {
+    icon: '/favicon.svg',
+  },
+  themeColor: '#4F46E5',
 }
 
 export default async function RootLayout({
@@ -24,6 +28,9 @@ export default async function RootLayout({
 
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+      </head>
       <body className={`${inter.className} min-h-screen bg-background text-foreground antialiased`}>
         <ThemeProvider>
           <AuthProvider session={session}>
