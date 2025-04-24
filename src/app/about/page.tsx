@@ -4,7 +4,7 @@ import Link from 'next/link';
 export default function AboutPage() {
   return (
     <div className="bg-white dark:bg-gray-900">
-      <div className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
           <h1 className="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
             About HealthFit
@@ -63,7 +63,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <div className="mt-16">
+        <div className="mt-16 pb-16">
           <h2 className="text-3xl font-extrabold text-gray-900 dark:text-white text-center">Get Started Today</h2>
           <div className="mt-8 flex justify-center">
             <Link 
