@@ -13,9 +13,7 @@ export default function WorkoutForm() {
     notes: "",
   });
 
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -38,11 +36,8 @@ export default function WorkoutForm() {
       }
 
       router.push("/workouts");
-      router.refresh();
     } catch (error) {
       console.error("Error creating workout:", error);
-      // You might want to show an error message to the user here
-    } finally {
       setIsLoading(false);
     }
   };
@@ -54,10 +49,7 @@ export default function WorkoutForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       <div>
-        <label
-          htmlFor="type"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
+        <label htmlFor="type" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           Workout Type
         </label>
         <select
@@ -66,22 +58,19 @@ export default function WorkoutForm() {
           value={formData.type}
           onChange={handleChange}
           required
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400 sm:text-sm"
+          className="mt-1 block w-full rounded-xl border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm"
         >
           <option value="">Select a type</option>
-          <option value="STRENGTH">Strength Training</option>
-          <option value="CARDIO">Cardio</option>
-          <option value="FLEXIBILITY">Flexibility</option>
+          <option value="Strength Training">Strength Training</option>
+          <option value="Cardio">Cardio</option>
+          <option value="Flexibility">Flexibility</option>
           <option value="HIIT">HIIT</option>
-          <option value="OTHER">Other</option>
+          <option value="Other">Other</option>
         </select>
       </div>
 
       <div>
-        <label
-          htmlFor="duration"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
+        <label htmlFor="duration" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           Duration (minutes)
         </label>
         <input
@@ -92,15 +81,12 @@ export default function WorkoutForm() {
           onChange={handleChange}
           required
           min="1"
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400 sm:text-sm"
+          className="mt-1 block w-full rounded-xl border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm"
         />
       </div>
 
       <div>
-        <label
-          htmlFor="caloriesBurned"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
+        <label htmlFor="caloriesBurned" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           Calories Burned
         </label>
         <input
@@ -110,17 +96,14 @@ export default function WorkoutForm() {
           value={formData.caloriesBurned}
           onChange={handleChange}
           required
-          min="0"
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400 sm:text-sm"
+          min="1"
+          className="mt-1 block w-full rounded-xl border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm"
         />
       </div>
 
       <div>
-        <label
-          htmlFor="notes"
-          className="block text-sm font-medium text-gray-700 dark:text-gray-300"
-        >
-          Notes
+        <label htmlFor="notes" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+          Notes (optional)
         </label>
         <textarea
           id="notes"
@@ -128,23 +111,22 @@ export default function WorkoutForm() {
           value={formData.notes}
           onChange={handleChange}
           rows={3}
-          className="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white shadow-sm focus:border-indigo-500 dark:focus:border-indigo-400 focus:ring-indigo-500 dark:focus:ring-indigo-400 sm:text-sm"
-          placeholder="Any additional notes about your workout..."
+          className="mt-1 block w-full rounded-xl border-gray-300 dark:border-gray-600 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:bg-gray-700 dark:text-white sm:text-sm"
         />
       </div>
 
-      <div className="flex justify-end space-x-3">
+      <div className="flex justify-end space-x-4">
         <button
           type="button"
           onClick={handleCancel}
-          className="inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 py-2 px-4 text-sm font-medium text-gray-700 dark:text-gray-300 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+          className="px-6 py-3 border border-gray-300 dark:border-gray-600 rounded-xl text-base font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition-all duration-300"
         >
           Cancel
         </button>
         <button
           type="submit"
           disabled={isLoading}
-          className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 dark:bg-indigo-500 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 dark:hover:bg-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 focus:ring-offset-2 dark:focus:ring-offset-gray-900 disabled:opacity-50"
+          className="px-6 py-3 border border-transparent rounded-xl text-base font-medium text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 dark:from-indigo-500 dark:to-purple-500 dark:hover:from-indigo-600 dark:hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 transition-all duration-300 shadow-lg"
         >
           {isLoading ? "Saving..." : "Save Workout"}
         </button>

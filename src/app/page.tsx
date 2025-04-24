@@ -5,7 +5,7 @@ export default async function Home() {
   const session = await getServerSession();
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-white to-indigo-50 dark:from-gray-900 dark:to-indigo-900/20">
+    <main className="min-h-screen bg-gradient-to-b from-white to-indigo-50 dark:from-gray-900 dark:to-indigo-900/20 py-12 sm:py-16">
       <div className="relative isolate px-6 lg:px-8">
         <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:py-32">
           <div className="text-center">
