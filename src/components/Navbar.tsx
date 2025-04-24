@@ -39,8 +39,8 @@ export default function Navbar() {
       <nav className="fixed top-0 left-0 right-0 bg-white dark:bg-gray-900 border-b border-border shadow-lg z-[9999]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex">
-              <div className="flex-shrink-0 flex items-center">
+            <div className="flex items-center">
+              <div className="flex-shrink-0">
                 <Link href="/" className="text-xl font-bold text-primary">
                   Health & Fitness
                 </Link>
@@ -62,10 +62,10 @@ export default function Navbar() {
                 ))}
               </div>
             </div>
-            <div className="flex items-center">
+            <div className="flex items-center space-x-4">
               <ThemeToggle />
               {session ? (
-                <Menu as="div" className="ml-3 relative">
+                <Menu as="div" className="relative">
                   <div>
                     <Menu.Button className="flex rounded-full bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary">
                       <span className="sr-only">Open user menu</span>
@@ -107,64 +107,60 @@ export default function Navbar() {
               ) : (
                 <Link
                   href="/auth/signin"
-                  className="ml-3 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-primary hover:bg-primary/90"
                 >
                   Sign in
                 </Link>
               )}
+              <Disclosure as="div" className="sm:hidden">
+                {({ open }) => (
+                  <>
+                    <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary">
+                      <span className="sr-only">Open main menu</span>
+                      {open ? (
+                        <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
+                      ) : (
+                        <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
+                      )}
+                    </Disclosure.Button>
+                    <Disclosure.Panel className="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-white dark:bg-gray-900 ring-1 ring-border focus:outline-none">
+                      <div className="pt-2 pb-3 space-y-1">
+                        {navigation.map((item) => (
+                          <Disclosure.Button
+                            key={item.name}
+                            as={Link}
+                            href={item.href}
+                            className={classNames(
+                              isActive(item.href)
+                                ? "bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/50 dark:to-purple-900/50 text-indigo-600 dark:text-indigo-400"
+                                : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800",
+                              "block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
+                            )}
+                            onClick={handleMenuItemClick}
+                          >
+                            {item.name}
+                          </Disclosure.Button>
+                        ))}
+                        {session && (
+                          <Disclosure.Button
+                            as="button"
+                            onClick={() => {
+                              signOut();
+                              handleMenuItemClick();
+                            }}
+                            className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
+                          >
+                            Sign out
+                          </Disclosure.Button>
+                        )}
+                      </div>
+                    </Disclosure.Panel>
+                  </>
+                )}
+              </Disclosure>
             </div>
           </div>
         </div>
-
-        {/* Mobile menu */}
-        <Disclosure as="nav" className="sm:hidden">
-          {({ open }) => (
-            <>
-              <div className="absolute right-0 top-0 mr-4 flex items-center sm:hidden">
-                <Disclosure.Button className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary">
-                  <span className="sr-only">Open main menu</span>
-                  {open ? (
-                    <XMarkIcon className="block h-6 w-6" aria-hidden="true" />
-                  ) : (
-                    <Bars3Icon className="block h-6 w-6" aria-hidden="true" />
-                  )}
-                </Disclosure.Button>
-              </div>
-              <Disclosure.Panel className="sm:hidden">
-                <div className="pt-2 pb-3 space-y-1">
-                  {navigation.map((item) => (
-                    <Disclosure.Button
-                      key={item.name}
-                      as={Link}
-                      href={item.href}
-                      className={classNames(
-                        isActive(item.href)
-                          ? "bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/50 dark:to-purple-900/50 text-indigo-600 dark:text-indigo-400"
-                          : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800",
-                        "block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
-                      )}
-                      onClick={handleMenuItemClick}
-                    >
-                      {item.name}
-                    </Disclosure.Button>
-                  ))}
-                  {session && (
-                    <Disclosure.Button
-                      as="button"
-                      onClick={() => {
-                        signOut();
-                        handleMenuItemClick();
-                      }}
-                      className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
-                    >
-                      Sign out
-                    </Disclosure.Button>
-                  )}
-                </div>
-              </Disclosure.Panel>
-            </>
-          )}
-        </Disclosure>
       </nav>
     </div>
   );
