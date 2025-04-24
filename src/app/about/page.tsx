@@ -70,10 +70,10 @@ export default function AboutPage() {
             <h2 className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">Get Started Today</h2>
             <div className="mt-8 flex justify-center">
               <Link 
-                href="/auth/signin" 
+                href="/dashboard" 
                 className="inline-flex items-center px-8 py-4 border border-transparent text-base font-medium rounded-xl shadow-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 dark:from-indigo-500 dark:to-purple-500 dark:hover:from-indigo-600 dark:hover:to-purple-600 transition-all duration-300"
               >
-                Sign Up Now
+                Explore Now
               </Link>
             </div>
           </div>
