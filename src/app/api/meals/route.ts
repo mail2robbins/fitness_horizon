@@ -44,7 +44,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(meal);
   } catch (error) {
-    console.error("Error creating meal:", error);
+    //console.error("Error creating meal:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
@@ -67,7 +67,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(meals);
   } catch (error) {
-    console.error("Error fetching meals:", error);
+    //console.error("Error fetching meals:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 } 

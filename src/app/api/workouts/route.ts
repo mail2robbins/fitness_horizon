@@ -38,7 +38,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json(workout);
   } catch (error) {
-    console.error("Error creating workout:", error);
+    //console.error("Error creating workout:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 }
@@ -58,7 +58,7 @@ export async function GET(request: Request) {
 
     return NextResponse.json(workouts);
   } catch (error) {
-    console.error("Error fetching workouts:", error);
+    //console.error("Error fetching workouts:", error);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 } 

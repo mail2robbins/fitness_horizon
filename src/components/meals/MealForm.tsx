@@ -55,7 +55,7 @@ export default function MealForm() {
       
       router.push("/meals");
     } catch (error) {
-      console.error("Error creating meal:", error);
+      //console.error("Error creating meal:", error);
       setIsLoading(false);
     }
   };

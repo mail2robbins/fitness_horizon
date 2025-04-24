@@ -68,7 +68,7 @@ export const authOptions: NextAuthOptions = {
 
         return true;
       } catch (error) {
-        console.error("Error in signIn callback:", error);
+        //console.error("Error in signIn callback:", error);
         return true; // Still allow sign in even if profile creation fails
       }
     },

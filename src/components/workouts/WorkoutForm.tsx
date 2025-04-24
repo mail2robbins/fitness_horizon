@@ -41,7 +41,7 @@ export default function WorkoutForm() {
       // Navigate to workouts page
       router.push("/workouts");
     } catch (error) {
-      console.error("Error creating workout:", error);
+      //console.error("Error creating workout:", error);
       setIsLoading(false);
     }
   };
