@@ -45,9 +45,14 @@ export default function ActivityChart({ workouts }: ActivityChartProps) {
         {
           label: 'Workouts',
           data: workouts.map(workout => workout.count),
-          backgroundColor: isDark ? 'rgba(96, 165, 250, 0.5)' : 'rgba(59, 130, 246, 0.5)',
-          borderColor: isDark ? 'rgb(96, 165, 250)' : 'rgb(59, 130, 246)',
+          backgroundColor: isDark 
+            ? 'rgba(129, 140, 248, 0.5)' 
+            : 'rgba(99, 102, 241, 0.5)',
+          borderColor: isDark 
+            ? 'rgb(129, 140, 248)' 
+            : 'rgb(99, 102, 241)',
           borderWidth: 1,
+          borderRadius: 4,
         },
       ],
     };
@@ -61,13 +66,21 @@ export default function ActivityChart({ workouts }: ActivityChartProps) {
       legend: {
         position: 'top' as const,
         labels: {
-          color: isDark ? '#fff' : '#111827',
+          color: isDark ? '#e5e7eb' : '#1f2937',
+          font: {
+            size: 14,
+            weight: 'bold' as const,
+          },
         },
       },
       title: {
         display: true,
         text: 'Workout Activity (Last 7 Days)',
-        color: isDark ? '#fff' : '#111827',
+        color: isDark ? '#e5e7eb' : '#1f2937',
+        font: {
+          size: 16,
+          weight: 'bold' as const,
+        },
       },
     },
     scales: {
@@ -76,6 +89,9 @@ export default function ActivityChart({ workouts }: ActivityChartProps) {
         ticks: {
           stepSize: 1,
           color: isDark ? '#9ca3af' : '#4b5563',
+          font: {
+            size: 12,
+          },
         },
         grid: {
           color: isDark ? 'rgba(75, 85, 99, 0.2)' : 'rgba(209, 213, 219, 0.2)',
@@ -84,6 +100,9 @@ export default function ActivityChart({ workouts }: ActivityChartProps) {
       x: {
         ticks: {
           color: isDark ? '#9ca3af' : '#4b5563',
+          font: {
+            size: 12,
+          },
         },
         grid: {
           color: isDark ? 'rgba(75, 85, 99, 0.2)' : 'rgba(209, 213, 219, 0.2)',
@@ -94,15 +113,20 @@ export default function ActivityChart({ workouts }: ActivityChartProps) {
 
   if (!chartData) {
     return (
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-        <p className="text-gray-600 dark:text-gray-400">Loading activity data...</p>
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
+        <p className="text-gray-600 dark:text-gray-300">Loading activity data...</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
-      <Bar options={options} data={chartData} />
+    <div>
+      <h3 className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-6">
+        Activity Overview
+      </h3>
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
+        <Bar options={options} data={chartData} />
+      </div>
     </div>
   );
 } 

@@ -81,28 +81,43 @@ export default async function DashboardPage() {
   );
 
   return (
-    <main className="min-h-screen bg-white dark:bg-gray-900">
+    <main className="min-h-screen bg-gradient-to-b from-white to-indigo-50 dark:from-gray-900 dark:to-indigo-900/20">
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
-          Welcome back, {user.profile?.name || "User"}!
-        </h1>
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 mb-8">
+          <h1 className="text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+            Welcome back, {user.profile?.name || "User"}!
+          </h1>
+          <p className="mt-2 text-gray-600 dark:text-gray-300">
+            Here's your fitness journey overview
+          </p>
+        </div>
 
         <div className="space-y-8">
-          <DashboardStats
-            totalWorkouts={totalWorkouts}
-            totalCaloriesBurned={totalCaloriesBurned._sum.caloriesBurned || 0}
-            totalCaloriesConsumed={totalCaloriesConsumed._sum.calories || 0}
-            streakDays={streakDays}
-          />
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <ActivityChart workouts={workoutsByDay} />
-            <GoalsProgress goals={user.goals} />
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
+            <DashboardStats
+              totalWorkouts={totalWorkouts}
+              totalCaloriesBurned={totalCaloriesBurned._sum.caloriesBurned || 0}
+              totalCaloriesConsumed={totalCaloriesConsumed._sum.calories || 0}
+              streakDays={streakDays}
+            />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <RecentWorkouts workouts={user.workouts} />
-            <RecentMeals meals={user.meals} />
+            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
+              <ActivityChart workouts={workoutsByDay} />
+            </div>
+            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
+              <GoalsProgress goals={user.goals} />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
+              <RecentWorkouts workouts={user.workouts} />
+            </div>
+            <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
+              <RecentMeals meals={user.meals} />
+            </div>
           </div>
         </div>
       </div>

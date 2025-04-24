@@ -10,22 +10,28 @@ interface GoalsProgressProps {
 export default function GoalsProgress({ goals }: GoalsProgressProps) {
   if (goals.length === 0) {
     return (
-      <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow">
-        <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-white">Goals</h3>
-        <p className="text-gray-500 dark:text-gray-400">You don't have any active goals yet.</p>
-        <a
-          href="/goals/new"
-          className="mt-4 inline-block rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 dark:bg-indigo-500 dark:hover:bg-indigo-400"
-        >
-          Create a Goal
-        </a>
+      <div>
+        <h3 className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-6">
+          Goals
+        </h3>
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 text-center">
+          <p className="text-gray-600 dark:text-gray-300 mb-4">You don't have any active goals yet.</p>
+          <a
+            href="/goals/new"
+            className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 dark:from-indigo-500 dark:to-purple-500 dark:hover:from-indigo-600 dark:hover:to-purple-600 transition-all duration-300"
+          >
+            Create a Goal
+          </a>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="rounded-lg bg-white dark:bg-gray-800 p-6 shadow">
-      <h3 className="mb-4 text-lg font-medium text-gray-900 dark:text-white">Goals Progress</h3>
+    <div>
+      <h3 className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-6">
+        Goals Progress
+      </h3>
       <div className="space-y-4">
         {goals.map((goal) => {
           const progress = (goal.current / goal.target) * 100;
@@ -35,29 +41,32 @@ export default function GoalsProgress({ goals }: GoalsProgressProps) {
           );
 
           return (
-            <div key={goal.id} className="border-b border-gray-200 dark:border-gray-700 pb-4 last:border-0">
+            <div 
+              key={goal.id} 
+              className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300"
+            >
               <div className="flex items-center justify-between">
-                <h4 className="font-medium text-gray-900 dark:text-white">{goal.title}</h4>
-                <span className="text-sm text-gray-500 dark:text-gray-400">
+                <h4 className="font-semibold text-gray-900 dark:text-white">{goal.title}</h4>
+                <span className="text-sm text-indigo-600 dark:text-indigo-400">
                   {daysLeft} days left
                 </span>
               </div>
-              <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-300">
                 {goal.description || `${goal.current} / ${goal.target} ${goal.type}`}
               </p>
-              <div className="mt-2">
-                <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+              <div className="mt-4">
+                <div className="flex items-center justify-between text-xs text-gray-600 dark:text-gray-300">
                   <span>{goal.current} {goal.type}</span>
                   <span>{goal.target} {goal.type}</span>
                 </div>
-                <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
+                <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-gray-200 dark:bg-gray-700">
                   <div
-                    className="h-full rounded-full bg-indigo-600 dark:bg-indigo-500"
+                    className="h-full rounded-full bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-500 dark:to-purple-500"
                     style={{ width: `${Math.min(progress, 100)}%` }}
                   ></div>
                 </div>
               </div>
-              <div className="mt-2 flex justify-between text-xs text-gray-500 dark:text-gray-400">
+              <div className="mt-4 flex justify-between text-xs text-gray-600 dark:text-gray-300">
                 <span>Started: {format(new Date(goal.startDate), "MMM d, yyyy")}</span>
                 <span>Ends: {format(new Date(goal.endDate), "MMM d, yyyy")}</span>
               </div>
@@ -65,12 +74,12 @@ export default function GoalsProgress({ goals }: GoalsProgressProps) {
           );
         })}
       </div>
-      <div className="mt-4 text-center">
+      <div className="mt-6 text-center">
         <a
           href="/goals"
-          className="text-sm font-medium text-indigo-600 hover:text-indigo-500 dark:text-indigo-400 dark:hover:text-indigo-300"
+          className="text-sm font-medium text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors duration-300"
         >
-          View all goals
+          View all goals →
         </a>
       </div>
     </div>
