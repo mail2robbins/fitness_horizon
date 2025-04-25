@@ -27,35 +27,17 @@ export const authOptions: NextAuthOptions = {
   ],
   pages: {
     signIn: "/auth/signin",
-  },
-  secret: process.env.NEXTAUTH_SECRET,
-  session: {
-    strategy: "jwt",
-  },
-  useSecureCookies: process.env.NODE_ENV === "production",
-  cookies: {
-    sessionToken: {
-      name: process.env.NODE_ENV === "production" ? "__Secure-next-auth.session-token" : "next-auth.session-token",
-      options: {
-        httpOnly: true,
-        sameSite: "lax",
-        path: "/",
-        secure: process.env.NODE_ENV === "production",
-      },
-    },
+    error: "/auth/error",
   },
   callbacks: {
-    async session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.sub as string;
-      }
-      return session;
-    },
     async signIn({ user, account, profile }) {
       try {
+        if (!user.email) {
+          return false;
+        }
         // Check if user exists
         const existingUser = await prisma.user.findUnique({
-          where: { email: user.email || "" },
+          where: { email: user.email },
           include: { accounts: true, profile: true },
         });
 
@@ -89,9 +71,33 @@ export const authOptions: NextAuthOptions = {
 
         return true;
       } catch (error) {
-        //console.error("Error in signIn callback:", error);
-        return true; // Still allow sign in even if profile creation fails
+        console.error("Error in signIn callback:", error);
+        return false; // Return false to show error
       }
     },
+    async session({ session, token }) {
+      if (session.user) {
+        session.user.id = token.sub as string;
+      }
+      return session;
+    },
   },
-};
+  secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
+  useSecureCookies: process.env.NODE_ENV === "production",
+  cookies: {
+    sessionToken: {
+      name: process.env.NODE_ENV === "production" ? "__Secure-next-auth.session-token" : "next-auth.session-token",
+      options: {
+        httpOnly: true,
+        sameSite: "lax",
+        path: "/",
+        secure: process.env.NODE_ENV === "production",
+      },
+    },
+  },
+  debug: process.env.NODE_ENV === "development",
+}
