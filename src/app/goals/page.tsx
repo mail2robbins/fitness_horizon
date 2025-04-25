@@ -124,7 +124,7 @@ export default function GoalsPage() {
 
         {goals.length === 0 ? (
           <div className="text-center py-12">
-            <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">You don't have any goals yet</p>
+            <p className="text-lg text-gray-600 dark:text-gray-300 mb-4">You don&apos;t have any goals yet</p>
             <Link
               href="/goals/new"
               className="text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 dark:hover:text-indigo-300"
