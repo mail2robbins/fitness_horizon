@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import DashboardWrapper from "@/components/dashboard/DashboardWrapper";
-import { format } from "date-fns";
+import { format, startOfDay, endOfDay } from "date-fns";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -50,25 +50,42 @@ export default async function DashboardPage() {
     _sum: { caloriesBurned: true },
   });
 
-  // Get workouts grouped by day for the last 7 days
-  const last7Days = await prisma.workout.groupBy({
-    by: ['completedAt'],
+  // Get the start and end dates for the last 7 days
+  const endDate = endOfDay(new Date());
+  const startDate = startOfDay(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
+
+  // Get all workouts for the last 7 days
+  const workouts = await prisma.workout.findMany({
     where: {
       userId: user.id,
       completedAt: {
-        gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000), // Last 7 days
+        gte: startDate,
+        lte: endDate,
       },
     },
-    _count: true,
     orderBy: {
       completedAt: 'asc',
     },
   });
 
-  // Format the data for the activity chart
-  const workoutsByDay = last7Days.map(day => ({
-    date: format(new Date(day.completedAt), 'yyyy-MM-dd'),
-    count: day._count,
+  // Create a map of all dates in the range with initial count of 0
+  const dateMap = new Map<string, number>();
+  let currentDate = startDate;
+  while (currentDate <= endDate) {
+    dateMap.set(format(currentDate, 'yyyy-MM-dd'), 0);
+    currentDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
+  }
+
+  // Group workouts by date and count them
+  workouts.forEach(workout => {
+    const date = format(workout.completedAt, 'yyyy-MM-dd');
+    dateMap.set(date, (dateMap.get(date) || 0) + 1);
+  });
+
+  // Convert the map to the required format
+  const workoutsByDay = Array.from(dateMap.entries()).map(([date, count]) => ({
+    date,
+    count,
   }));
 
   return (
