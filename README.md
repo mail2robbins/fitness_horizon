@@ -12,6 +12,9 @@ npx prisma generate
 npx prisma db push
 
 
+# to generate a new NEXTAUTH_SECRET
+# node -e "console.log(crypto.randomBytes(32).toString('base64'))"
+
 
    # 1. Delete the migrations directory
    rm -r prisma/migrations
