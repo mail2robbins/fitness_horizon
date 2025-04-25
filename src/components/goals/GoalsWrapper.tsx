@@ -27,14 +27,6 @@ export default function GoalsWrapper({ goals }: GoalsWrapperProps) {
 
   return (
     <div className="space-y-8">
-      <div className="text-center mb-12">
-        <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 sm:text-5xl sm:tracking-tight lg:text-6xl">
-          Goals
-        </h1>
-        <p className="mt-5 max-w-xl mx-auto text-xl text-gray-600 dark:text-gray-300">
-          Track and manage your fitness goals
-        </p>
-      </div>
 
       <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
         <div className="flex justify-between items-center mb-8">
