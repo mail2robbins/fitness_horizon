@@ -32,10 +32,10 @@ export default async function SignIn() {
   }, {} as Record<string, ClientSafeProvider>);
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center py-2">
-      <div className="w-full max-w-md space-y-8 rounded-lg bg-white p-6 shadow-lg dark:bg-gray-800">
+    <div className="bg-gradient-to-b from-indigo-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:to-indigo-900/20 min-h-screen flex flex-col items-center justify-center py-2">
+      <div className="w-full max-w-md space-y-8 rounded-2xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm p-8 shadow-lg border border-gray-100 dark:border-gray-700">
         <div>
-          <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900 dark:text-white">
+          <h2 className="mt-6 text-center text-3xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
             Sign in to your account
           </h2>
         </div>

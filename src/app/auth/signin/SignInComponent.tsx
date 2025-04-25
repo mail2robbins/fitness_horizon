@@ -15,25 +15,25 @@ export default function SignInComponent({ providers }: SignInComponentProps) {
         <div key={provider.name}>
           <button
             onClick={() => signIn(provider.id, { callbackUrl: "/" })}
-            className="group relative flex w-full justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="group relative flex w-full justify-center rounded-xl border border-transparent bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 dark:from-indigo-500 dark:to-purple-500 dark:hover:from-indigo-600 dark:hover:to-purple-600 px-8 py-4 text-base font-medium text-white shadow-lg transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:focus:ring-offset-gray-800"
           >
-            <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+            <span className="absolute inset-y-0 left-0 flex items-center pl-6">
               {provider.name === "Google" && (
                 <Image
                   src="/google.svg"
                   alt="Google"
-                  width={20}
-                  height={20}
-                  className="h-5 w-5"
+                  width={24}
+                  height={24}
+                  className="h-6 w-6 filter dark:invert"
                 />
               )}
               {provider.name === "GitHub" && (
                 <Image
                   src="/github.svg"
                   alt="GitHub"
-                  width={20}
-                  height={20}
-                  className="h-5 w-5"
+                  width={24}
+                  height={24}
+                  className="h-6 w-6 filter dark:invert"
                 />
               )}
             </span>
