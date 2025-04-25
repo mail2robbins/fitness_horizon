@@ -9,6 +9,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  ChartData,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { useTheme } from "@/components/ThemeProvider";
@@ -32,7 +33,7 @@ interface ActivityChartProps {
 }
 
 export default function ActivityChart({ workouts }: ActivityChartProps) {
-  const [chartData, setChartData] = useState<any>(null);
+  const [chartData, setChartData] = useState<ChartData<"bar"> | null>(null);
   const { theme, systemTheme } = useTheme();
   const isDark = theme === "dark" || (theme === "system" && systemTheme === "dark");
 

@@ -68,6 +68,7 @@ export async function GET(request: Request) {
     return NextResponse.json(meals);
   } catch (error) {
     //console.error("Error fetching meals:", error);
+    console.log("Error fetching meals:", request);
     return new NextResponse("Internal Server Error", { status: 500 });
   }
 } 

@@ -15,7 +15,7 @@ export default function GoalsProgress({ goals }: GoalsProgressProps) {
           Goals
         </h3>
         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700 text-center">
-          <p className="text-gray-600 dark:text-gray-300 mb-4">You don't have any active goals yet.</p>
+          <p className="text-gray-600 dark:text-gray-300 mb-4">You don&apos;t have any active goals yet.</p>
           <a
             href="/goals/new"
             className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-xl shadow-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 dark:from-indigo-500 dark:to-purple-500 dark:hover:from-indigo-600 dark:hover:to-purple-600 transition-all duration-300"

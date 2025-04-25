@@ -17,7 +17,6 @@ function classNames(...classes: string[]) {
 export default function Navbar() {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme } = useTheme();
 
   const navigation = [
@@ -27,10 +26,6 @@ export default function Navbar() {
     { name: "Meals", href: "/meals" },
     { name: "About", href: "/about" },
   ];
-
-  const handleMenuItemClick = () => {
-    setIsMenuOpen(false);
-  };
 
   const isActive = (path: string) => pathname === path;
 
@@ -140,7 +135,6 @@ export default function Navbar() {
                                 : "text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800",
                               "block px-3 py-2 rounded-md text-base font-medium transition-colors duration-200"
                             )}
-                            onClick={handleMenuItemClick}
                           >
                             {item.name}
                           </Disclosure.Button>
@@ -150,7 +144,6 @@ export default function Navbar() {
                             as="button"
                             onClick={() => {
                               signOut();
-                              handleMenuItemClick();
                             }}
                             className="w-full text-left px-3 py-2 rounded-md text-base font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-200"
                           >

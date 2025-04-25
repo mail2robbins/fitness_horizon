@@ -36,18 +36,23 @@ export default function FeaturesPage() {
   );
 }
 
+interface IconProps extends React.SVGProps<SVGSVGElement> {
+  className?: string;
+}
+
 const features = [
   {
     name: "Workout Tracking",
     description:
       "Log your workouts, track your progress, and get personalized recommendations based on your fitness goals.",
-    icon: function WorkoutIcon(props: any) {
+    icon: function WorkoutIcon({ className, ...props }: IconProps) {
       return (
         <svg
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
+          className={className}
           {...props}
         >
           <path
@@ -63,13 +68,14 @@ const features = [
     name: "Nutrition Planning",
     description:
       "Create meal plans, track your nutrition, and get insights into your dietary habits.",
-    icon: function NutritionIcon(props: any) {
+    icon: function NutritionIcon({ className, ...props }: IconProps) {
       return (
         <svg
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
+          className={className}
           {...props}
         >
           <path
@@ -85,13 +91,14 @@ const features = [
     name: "Progress Analytics",
     description:
       "Visualize your progress with detailed charts and analytics to stay motivated and on track.",
-    icon: function AnalyticsIcon(props: any) {
+    icon: function AnalyticsIcon({ className, ...props }: IconProps) {
       return (
         <svg
           fill="none"
           viewBox="0 0 24 24"
           strokeWidth={1.5}
           stroke="currentColor"
+          className={className}
           {...props}
         >
           <path

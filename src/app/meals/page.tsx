@@ -43,7 +43,7 @@ export default async function MealsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 sm:text-5xl sm:tracking-tight lg:text-6xl">
-            Today's Meals
+            Today&apos;s Meals
           </h1>
           <p className="mt-5 max-w-xl mx-auto text-xl text-gray-600 dark:text-gray-300">
             Track your nutrition for {format(today, "MMMM d, yyyy")}

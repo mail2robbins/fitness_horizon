@@ -12,7 +12,7 @@ export default async function SignIn() {
             Sign in to your account
           </h2>
         </div>
-        <SignInComponent providers={providers} />
+        <SignInComponent providers={providers ?? {}} />
       </div>
     </div>
   );

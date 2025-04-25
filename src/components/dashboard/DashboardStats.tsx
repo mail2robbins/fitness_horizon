@@ -1,5 +1,6 @@
 "use client";
 
+import React from 'react';
 import { 
   FireIcon, 
   BoltIcon, 
@@ -7,19 +8,23 @@ import {
   CalendarIcon 
 } from "@heroicons/react/24/outline";
 
-interface DashboardStatsProps {
+interface Props {
   totalWorkouts: number;
   totalCaloriesBurned: number;
   totalCaloriesConsumed: number;
-  streakDays: number;
+  streak?: number;
+  streakDays?: number;
 }
 
-export default function DashboardStats({
+const DashboardStats = ({
   totalWorkouts,
   totalCaloriesBurned,
   totalCaloriesConsumed,
-  streakDays,
-}: DashboardStatsProps) {
+  streak = 0,
+  streakDays = 0,
+}: Props) => {
+  const currentStreak = streak || streakDays;
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300">
@@ -61,10 +66,12 @@ export default function DashboardStats({
         </div>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white">Current Streak</h3>
         <p className="mt-2 text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400">
-          {streakDays}
+          {currentStreak}
         </p>
         <p className="mt-1 text-sm text-gray-600 dark:text-gray-300">days in a row</p>
       </div>
     </div>
   );
-} 
+};
+
+export default DashboardStats; 

@@ -83,6 +83,14 @@ export default async function DashboardPage() {
     })
   );
 
+  // Create stats props
+  const stats = {
+    totalWorkouts,
+    totalCaloriesBurned: totalCaloriesBurned._sum.caloriesBurned || 0,
+    totalCaloriesConsumed: totalCaloriesConsumed._sum.calories || 0,
+    streak: streakDays,
+  };
+
   return (
     <main className="min-h-screen bg-gradient-to-b from-indigo-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:to-indigo-900/20">
       <div className="container mx-auto px-4 py-8">
@@ -91,18 +99,13 @@ export default async function DashboardPage() {
             Welcome back, {user.profile?.name || "User"}!
           </h1>
           <p className="mt-2 text-gray-600 dark:text-gray-300">
-            Here's your fitness journey overview
+            Here&apos;s your fitness journey overview
           </p>
         </div>
 
         <div className="space-y-8">
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
-            <DashboardStats
-              totalWorkouts={totalWorkouts}
-              totalCaloriesBurned={totalCaloriesBurned._sum.caloriesBurned || 0}
-              totalCaloriesConsumed={totalCaloriesConsumed._sum.calories || 0}
-              streakDays={streakDays}
-            />
+            <DashboardStats {...stats} />
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

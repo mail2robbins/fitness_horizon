@@ -2,15 +2,11 @@
 
 import { format } from "date-fns";
 import Link from "next/link";
-import type { Workout } from "@/types/prisma";
+import type { Workout } from "@prisma/client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 
-interface RecentWorkoutsProps {
-  workouts: Workout[];
-}
-
-export default function RecentWorkouts({ workouts }: RecentWorkoutsProps) {
+export default function RecentWorkouts({ workouts }: { workouts: Workout[] }) {
   const router = useRouter();
 
   // Refresh the component data periodically
@@ -59,7 +55,7 @@ export default function RecentWorkouts({ workouts }: RecentWorkoutsProps) {
       </div>
 
       <div className="space-y-4">
-        {workouts.map((workout) => (
+        {workouts.map((workout: Workout) => (
           <div
             key={workout.id}
             className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300"

@@ -2,11 +2,16 @@
 
 import { signIn } from "next-auth/react";
 import Image from "next/image";
+import type { ClientSafeProvider } from "next-auth/react";
 
-export default function SignInComponent({ providers }: any) {
+interface SignInComponentProps {
+  providers: Record<string, ClientSafeProvider>;
+}
+
+export default function SignInComponent({ providers }: SignInComponentProps) {
   return (
     <div className="mt-8 space-y-6">
-      {Object.values(providers).map((provider: any) => (
+      {Object.values(providers).map((provider: ClientSafeProvider) => (
         <div key={provider.name}>
           <button
             onClick={() => signIn(provider.id, { callbackUrl: "/" })}
