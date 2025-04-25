@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { useTheme } from '@/components/ThemeProvider';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function NewGoal() {
   const router = useRouter();
@@ -17,6 +18,7 @@ export default function NewGoal() {
     startDate: new Date().toISOString().split('T')[0],
     endDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0], // 30 days from now
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const goalTypes = [
     { value: 'weight', label: 'Weight Goal' },
@@ -27,6 +29,7 @@ export default function NewGoal() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSubmitting(true);
     
     try {
       const response = await fetch('/api/goals', {
@@ -48,6 +51,7 @@ export default function NewGoal() {
       router.refresh();
     } catch (error) {
       console.error('Error creating goal:', error);
+      setIsSubmitting(false);
     }
   };
 
@@ -60,11 +64,11 @@ export default function NewGoal() {
   };
 
   if (!session) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <p className="text-lg">Please sign in to create a goal</p>
-      </div>
-    );
+    return <LoadingSpinner title="Authentication" subtitle="Please sign in to continue..." fullScreen />;
+  }
+
+  if (isSubmitting) {
+    return <LoadingSpinner title="Creating Goal" subtitle="Saving your new goal..." fullScreen />;
   }
 
   return (

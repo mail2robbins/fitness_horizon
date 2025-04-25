@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { Goal } from '@prisma/client';
 import { useTheme } from '@/components/ThemeProvider';
+import LoadingSpinner from '@/components/LoadingSpinner';
 
 export default function GoalsPage() {
   const { data: session } = useSession();
@@ -89,26 +90,7 @@ export default function GoalsPage() {
   }
 
   if (loading) {
-    return (
-      <div className="bg-gradient-to-b from-indigo-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:to-indigo-900/20 min-h-screen">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 sm:text-5xl sm:tracking-tight lg:text-6xl">
-              My Goals
-            </h1>
-            <p className="mt-5 max-w-xl mx-auto text-xl text-gray-600 dark:text-gray-300">
-              Loading your goals...
-            </p>
-          </div>
-          <div className="flex justify-center items-center min-h-[400px]">
-            <div className="relative">
-              <div className="w-16 h-16 border-4 border-indigo-200 dark:border-indigo-800 rounded-full animate-spin border-t-4 border-t-indigo-600 dark:border-t-indigo-400"></div>
-              <div className="absolute top-0 left-0 w-16 h-16 border-4 border-transparent rounded-full animate-spin border-t-4 border-t-purple-600 dark:border-t-purple-400"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
+    return <LoadingSpinner title="My Goals" subtitle="Loading your goals..." fullScreen />;
   }
 
   if (error) {
