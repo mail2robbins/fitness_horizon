@@ -14,10 +14,13 @@ const LoadingSpinner: FC<LoadingSpinnerProps> = ({
   fullScreen = false 
 }) => {
   return (
-    <div className={`flex flex-col items-center justify-center ${fullScreen ? 'min-h-screen' : 'min-h-[200px]'}`}>
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
+    <div className={`bg-gradient-to-b from-indigo-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:to-indigo-900/20 ${fullScreen ? 'min-h-screen' : 'min-h-[200px]'} flex flex-col items-center justify-center`}>
+      <div className="relative">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-indigo-200 dark:border-gray-700"></div>
+        <div className="absolute top-0 left-0 animate-spin rounded-full h-12 w-12 border-t-4 border-indigo-600 dark:border-indigo-400"></div>
+      </div>
       {title && (
-        <h2 className="mt-4 text-xl font-semibold text-gray-900 dark:text-white">
+        <h2 className="mt-4 text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
           {title}
         </h2>
       )}
