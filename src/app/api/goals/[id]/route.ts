@@ -15,7 +15,7 @@ export async function PUT(
 
     const { id } = params;
     const body = await request.json();
-    const { title, description, targetDate, status } = body;
+    const { title, description, type, target, startDate, endDate, completed } = body;
 
     const goal = await prisma.goal.update({
       where: {
@@ -25,8 +25,11 @@ export async function PUT(
       data: {
         title,
         description,
-        targetDate,
-        status,
+        type,
+        target,
+        startDate,
+        endDate,
+        completed,
       },
     });
 
