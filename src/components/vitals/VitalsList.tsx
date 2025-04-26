@@ -24,7 +24,20 @@ export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
   // Update local state when props change
   useEffect(() => {
     setVitals(initialVitals);
-    setFilteredVitals(initialVitals);
+    
+    // Apply initial daily filter
+    const today = new Date();
+    const startOfToday = new Date(today);
+    startOfToday.setHours(0, 0, 0, 0);
+    const endOfToday = new Date(today);
+    endOfToday.setHours(23, 59, 59, 999);
+    
+    const filtered = initialVitals.filter(vital => {
+      const vitalDate = new Date(vital.recordedAt);
+      return vitalDate >= startOfToday && vitalDate <= endOfToday;
+    });
+    
+    setFilteredVitals(filtered);
   }, [initialVitals]);
 
   const handleVitalAdded = (newVital: any) => {

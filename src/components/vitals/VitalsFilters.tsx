@@ -19,7 +19,7 @@ export interface VitalsFilters {
 
 export default function VitalsFilters({ vitalTypes, onFilterChange }: VitalsFiltersProps) {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [period, setPeriod] = useState<VitalsFilters['period']>('all');
+  const [period, setPeriod] = useState<VitalsFilters['period']>('daily');
   const [customDateRange, setCustomDateRange] = useState({
     start: format(new Date(), 'yyyy-MM-dd'),
     end: format(new Date(), 'yyyy-MM-dd'),
@@ -136,7 +136,7 @@ export default function VitalsFilters({ vitalTypes, onFilterChange }: VitalsFilt
       <div>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Time Period</h3>
         <div className="flex flex-wrap gap-3">
-          {['all', 'daily', 'weekly', 'monthly', 'yearly', 'custom'].map((p) => (
+          {['daily', 'weekly', 'monthly', 'yearly', 'custom', 'all'].map((p) => (
             <button
               key={p}
               onClick={() => handlePeriodChange(p as VitalsFilters['period'])}
