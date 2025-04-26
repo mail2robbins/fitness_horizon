@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import WorkoutFilters, { WorkoutFilters as WorkoutFiltersType } from "./WorkoutFilters";
@@ -27,6 +27,11 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const workoutTypes = Array.from(new Set(initialWorkouts.map(workout => workout.type)));
 
+  // Update the workouts list when initialWorkouts changes
+  useEffect(() => {
+    setFilteredWorkouts(initialWorkouts);
+  }, [initialWorkouts]);
+
   const handleFilterChange = (filters: WorkoutFiltersType) => {
     const filtered = initialWorkouts.filter(workout => {
       const workoutDate = new Date(workout.completedAt);
@@ -46,6 +51,15 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
   const handleEditDialogClose = () => {
     setSelectedWorkout(null);
     setIsEditDialogOpen(false);
+  };
+
+  const handleWorkoutUpdated = (updatedWorkout: Workout) => {
+    // Update the workouts list with the updated workout
+    setFilteredWorkouts(prevWorkouts => 
+      prevWorkouts.map(workout => 
+        workout.id === updatedWorkout.id ? updatedWorkout : workout
+      )
+    );
   };
 
   // Calculate total stats for filtered workouts
@@ -139,7 +153,7 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
                     className={`p-8 transition-all duration-300 relative ${
                       selectedWorkout?.id === workout.id
                         ? "bg-purple-50/90 dark:bg-purple-900/80"
-                        : "hover:bg-gray-50/80 dark:hover:bg-gray-700/50"
+                        : "hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-100/80 dark:hover:from-gray-700/50 dark:hover:to-gray-800/50 hover:shadow-md hover:scale-[1.01]"
                     }`}
                   >
                     {selectedWorkout?.id === workout.id && (
@@ -236,6 +250,7 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
           workout={selectedWorkout}
           isOpen={isEditDialogOpen}
           onClose={handleEditDialogClose}
+          onWorkoutUpdated={handleWorkoutUpdated}
         />
       )}
     </div>

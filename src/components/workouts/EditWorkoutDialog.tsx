@@ -21,12 +21,14 @@ interface EditWorkoutDialogProps {
   };
   isOpen: boolean;
   onClose: () => void;
+  onWorkoutUpdated?: (updatedWorkout: any) => void;
 }
 
 export default function EditWorkoutDialog({
   workout,
   isOpen,
   onClose,
+  onWorkoutUpdated,
 }: EditWorkoutDialogProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -59,6 +61,13 @@ export default function EditWorkoutDialog({
 
       if (!response.ok) {
         throw new Error("Failed to update workout");
+      }
+
+      const updatedWorkout = await response.json();
+      
+      // Call the parent component's callback with the updated workout
+      if (onWorkoutUpdated) {
+        onWorkoutUpdated(updatedWorkout);
       }
 
       router.refresh();
