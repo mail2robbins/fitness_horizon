@@ -82,6 +82,12 @@ export default function EditVitalDialog({
     setIsLoading(true);
 
     try {
+      // Get the unit from the selected vital type
+      const selectedType = vitalTypes.find((vt) => vt.type === formData.type);
+      if (!selectedType) {
+        throw new Error("Invalid vital type");
+      }
+
       const response = await fetch(`/api/vitals/${vital.id}`, {
         method: "PUT",
         headers: {
@@ -91,6 +97,7 @@ export default function EditVitalDialog({
           type: formData.type,
           value: parseFloat(formData.value),
           value2: formData.value2 ? parseFloat(formData.value2) : undefined,
+          unit: selectedType.unit,
           notes: formData.notes,
         }),
       });

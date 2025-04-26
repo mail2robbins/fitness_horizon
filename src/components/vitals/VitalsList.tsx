@@ -7,26 +7,65 @@ import EditVitalDialog from "./EditVitalDialog";
 import VitalsMenu from "./VitalsMenu";
 import { Button } from "@/components/ui/button";
 import { Vital } from "@/types/vital";
+import { useRouter } from "next/navigation";
 
 interface VitalsListProps {
   vitals: Vital[];
 }
 
-export default function VitalsList({ vitals }: VitalsListProps) {
+// Define a type for the vital data returned from the API
+interface ApiVital {
+  id: string;
+  type: string;
+  value: number;
+  value2?: number;
+  unit: string;
+  notes?: string;
+  recordedAt: string;
+}
+
+export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
+  const router = useRouter();
+  const [vitals, setVitals] = useState<Vital[]>(initialVitals);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingVital, setEditingVital] = useState<Vital | null>(null);
   const [filter, setFilter] = useState<string>("all");
 
-  const handleVitalAdded = (newVital: Vital) => {
-    // Implementation of handleVitalAdded
+  // Update local state when props change
+  useEffect(() => {
+    setVitals(initialVitals);
+  }, [initialVitals]);
+
+  const handleVitalAdded = (newVital: ApiVital) => {
+    // Convert ApiVital to Vital
+    const vital: Vital = {
+      ...newVital,
+      userId: "", // This will be filled by the server
+      createdAt: newVital.recordedAt,
+      updatedAt: newVital.recordedAt,
+    };
+    setVitals((prev) => [vital, ...prev]);
   };
 
-  const handleVitalUpdated = (updatedVital: Vital) => {
-    // Implementation of handleVitalUpdated
+  const handleVitalUpdated = (updatedVital: ApiVital) => {
+    // Convert ApiVital to Vital
+    const vital: Vital = {
+      ...updatedVital,
+      userId: "", // This will be filled by the server
+      createdAt: updatedVital.recordedAt,
+      updatedAt: updatedVital.recordedAt,
+    };
+    setVitals((prev) => 
+      prev.map((v) => (v.id === vital.id ? vital : v))
+    );
+    // Refresh the page to ensure all data is in sync
+    router.refresh();
   };
 
   const handleVitalDeleted = (deletedId: string) => {
-    // Implementation of handleVitalDeleted
+    setVitals((prev) => prev.filter((vital) => vital.id !== deletedId));
+    // Refresh the page to ensure all data is in sync
+    router.refresh();
   };
 
   const filteredVitals = filter === "all" 
