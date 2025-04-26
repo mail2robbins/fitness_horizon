@@ -4,6 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import WorkoutFilters, { WorkoutFilters as WorkoutFiltersType } from "./WorkoutFilters";
+import EditWorkoutDialog from "./EditWorkoutDialog";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
 
 interface Workout {
   id: string;
@@ -20,6 +23,8 @@ interface WorkoutsListProps {
 
 export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
   const [filteredWorkouts, setFilteredWorkouts] = useState(initialWorkouts);
+  const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const workoutTypes = Array.from(new Set(initialWorkouts.map(workout => workout.type)));
 
   const handleFilterChange = (filters: WorkoutFiltersType) => {
@@ -31,6 +36,16 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
     });
 
     setFilteredWorkouts(filtered);
+  };
+
+  const handleEditClick = (workout: Workout) => {
+    setSelectedWorkout(workout);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleEditDialogClose = () => {
+    setSelectedWorkout(null);
+    setIsEditDialogOpen(false);
   };
 
   // Calculate total stats for filtered workouts
@@ -72,7 +87,7 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
         {/* Log New Workout Button */}
         <div className="flex justify-center mb-8">
           <Link
-            href="/workouts/log"
+            href="/workouts/new"
             className="inline-flex items-center px-8 py-4 border border-transparent text-base font-medium rounded-xl shadow-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 dark:from-indigo-500 dark:to-purple-500 dark:hover:from-indigo-600 dark:hover:to-purple-600 transition-all duration-300"
           >
             Log New Workout
@@ -119,36 +134,83 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
               </div>
               <div className="divide-y divide-gray-200 dark:divide-gray-700">
                 {dateWorkouts.map((workout) => (
-                  <div key={workout.id} className="p-8 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                    <div className="flex justify-between items-start">
+                  <div
+                    key={workout.id}
+                    className={`p-8 transition-all duration-300 relative ${
+                      selectedWorkout?.id === workout.id
+                        ? "bg-purple-50/90 dark:bg-purple-900/80"
+                        : "hover:bg-gray-50/80 dark:hover:bg-gray-700/50"
+                    }`}
+                  >
+                    {selectedWorkout?.id === workout.id && (
+                      <>
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-100 via-fuchsia-100 to-pink-100 dark:from-purple-800 dark:via-fuchsia-800 dark:to-pink-800 opacity-80 dark:opacity-60" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-200/30 via-fuchsia-200/30 to-pink-200/30 dark:from-purple-600/40 dark:via-fuchsia-600/40 dark:to-pink-600/40 animate-pulse" />
+                      </>
+                    )}
+                    <div className="relative z-10 flex justify-between items-start">
                       <div>
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                          {workout.type} Workout
-                        </h3>
+                        <div className="flex items-center gap-4">
+                          <h3 className={`text-lg font-medium transition-colors duration-300 ${
+                            selectedWorkout?.id === workout.id
+                              ? "text-indigo-700 dark:text-indigo-400"
+                              : "text-gray-900 dark:text-white"
+                          }`}>
+                            {workout.type} Workout
+                          </h3>
+                          <Button
+                            variant={selectedWorkout?.id === workout.id ? "default" : "ghost"}
+                            size="icon"
+                            onClick={() => handleEditClick(workout)}
+                            className={`h-8 w-8 transition-all duration-300 ${
+                              selectedWorkout?.id === workout.id
+                                ? "bg-indigo-100 dark:bg-indigo-900/50 hover:bg-indigo-200 dark:hover:bg-indigo-800/50"
+                                : ""
+                            }`}
+                          >
+                            <Pencil className={`h-4 w-4 transition-colors duration-300 ${
+                              selectedWorkout?.id === workout.id
+                                ? "text-indigo-700 dark:text-indigo-400"
+                                : ""
+                            }`} />
+                          </Button>
+                        </div>
                         {workout.notes && (
                           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{workout.notes}</p>
                         )}
                       </div>
-                      <div className="text-right">
-                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Duration</p>
-                        <p className="text-lg font-semibold text-gray-900 dark:text-white">
-                          {workout.duration} min
-                        </p>
-                      </div>
-                    </div>
-                    <div className="mt-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Calories Burned</p>
-                          <p className="text-lg font-semibold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
-                            {workout.caloriesBurned}
+                      <div>
+                        <div className="text-right">
+                          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Duration</p>
+                          <p className={`text-lg font-semibold transition-colors duration-300 ${
+                            selectedWorkout?.id === workout.id
+                              ? "text-indigo-700 dark:text-indigo-400"
+                              : "bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400"
+                          }`}>
+                            {workout.duration} min
                           </p>
                         </div>
-                        <div className="text-right">
-                          <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Time</p>
-                          <p className="text-sm text-gray-900 dark:text-white">
-                            {format(new Date(workout.completedAt), "h:mm a")}
-                          </p>
+                        <div className="mt-4 flex items-center justify-between">
+                          <div className="text-right">
+                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Calories Burned</p>
+                            <p className={`text-lg font-semibold transition-colors duration-300 ${
+                              selectedWorkout?.id === workout.id
+                                ? "text-indigo-700 dark:text-indigo-400"
+                                : "bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400"
+                            }`}>
+                              {workout.caloriesBurned}
+                            </p>
+                          </div>
+                          <div className="text-right ml-8">
+                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Time</p>
+                            <p className={`text-sm transition-colors duration-300 ${
+                              selectedWorkout?.id === workout.id
+                                ? "text-indigo-700 dark:text-indigo-400"
+                                : "text-gray-900 dark:text-white"
+                            }`}>
+                              {format(new Date(workout.completedAt), "h:mm a")}
+                            </p>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -168,6 +230,14 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
           )}
         </div>
       </div>
+
+      {selectedWorkout && (
+        <EditWorkoutDialog
+          workout={selectedWorkout}
+          isOpen={isEditDialogOpen}
+          onClose={handleEditDialogClose}
+        />
+      )}
     </div>
   );
 } 
