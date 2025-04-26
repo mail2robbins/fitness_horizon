@@ -6,7 +6,23 @@ import { useTheme } from '@/components/ThemeProvider';
 import Link from 'next/link';
 import { EditGoalDialog } from '@/components/EditGoalDialog';
 import { Button } from '@/components/ui/button';
-import { CheckCircle } from 'lucide-react';
+import { CheckCircle, Pencil, Trash2 } from 'lucide-react';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface GoalsListProps {
   goals: Goal[];
@@ -16,7 +32,9 @@ interface GoalsListProps {
 export default function GoalsList({ goals, onGoalsUpdated }: GoalsListProps) {
   const { theme } = useTheme();
   const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
+  const [deletingGoal, setDeletingGoal] = useState<Goal | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isUpdating, setIsUpdating] = useState<string | null>(null);
 
   const getProgressPercentage = (current: number, target: number) => {
@@ -68,6 +86,32 @@ export default function GoalsList({ goals, onGoalsUpdated }: GoalsListProps) {
   const handleEditClick = (goal: Goal) => {
     setEditingGoal(goal);
     setIsEditDialogOpen(true);
+  };
+
+  const handleDeleteClick = (goal: Goal) => {
+    setDeletingGoal(goal);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!deletingGoal) return;
+
+    try {
+      const response = await fetch(`/api/goals/${deletingGoal.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete goal');
+      }
+
+      await handleGoalUpdated();
+    } catch (error) {
+      console.error('Error deleting goal:', error);
+    } finally {
+      setDeletingGoal(null);
+      setIsDeleteDialogOpen(false);
+    }
   };
 
   const handleGoalUpdated = async () => {
@@ -138,24 +182,59 @@ export default function GoalsList({ goals, onGoalsUpdated }: GoalsListProps) {
               </div>
               <div className="flex gap-2">
                 {canCompleteGoal(goal) && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => handleCompleteGoal(goal.id)}
-                    disabled={isUpdating === goal.id}
-                    className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300 border-green-200 dark:border-green-800 hover:bg-green-50 dark:hover:bg-green-900/20"
-                  >
-                    <CheckCircle className="h-4 w-4 mr-1" />
-                    {isUpdating === goal.id ? 'Completing...' : 'Complete'}
-                  </Button>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => handleCompleteGoal(goal.id)}
+                          disabled={isUpdating === goal.id}
+                          className="text-green-600 hover:text-green-700 dark:text-green-400 dark:hover:text-green-300"
+                        >
+                          <CheckCircle className="h-4 w-4" />
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>{isUpdating === goal.id ? 'Completing...' : 'Mark as Complete'}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleEditClick(goal)}
-                >
-                  Edit
-                </Button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleEditClick(goal)}
+                        className="text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Edit Goal</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleDeleteClick(goal)}
+                        className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p>Delete Goal</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
               </div>
             </div>
             <div className="mt-4 flex justify-between items-center">
@@ -178,6 +257,27 @@ export default function GoalsList({ goals, onGoalsUpdated }: GoalsListProps) {
           onGoalUpdated={handleGoalUpdated}
         />
       )}
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete this goal?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the goal
+              &quot;{deletingGoal?.title}&quot; and remove it from your goals list.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700 dark:bg-red-600 dark:hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 } 
