@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { format, subDays, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
 
 interface VitalsFiltersProps {
@@ -19,22 +19,11 @@ export interface VitalsFilters {
 
 export default function VitalsFilters({ vitalTypes, onFilterChange }: VitalsFiltersProps) {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [period, setPeriod] = useState<VitalsFilters['period']>('daily');
+  const [period, setPeriod] = useState<VitalsFilters['period']>('all');
   const [customDateRange, setCustomDateRange] = useState({
     start: format(new Date(), 'yyyy-MM-dd'),
     end: format(new Date(), 'yyyy-MM-dd'),
   });
-
-  // Initialize with daily period on component mount
-  useEffect(() => {
-    const start = startOfDay(new Date());
-    const end = endOfDay(new Date());
-    onFilterChange({
-      dateRange: { start, end },
-      types: selectedTypes,
-      period: 'daily',
-    });
-  }, []);
 
   const handlePeriodChange = (newPeriod: VitalsFilters['period']) => {
     setPeriod(newPeriod);
@@ -141,16 +130,13 @@ export default function VitalsFilters({ vitalTypes, onFilterChange }: VitalsFilt
     }
   };
 
-  // Define time periods with 'all' as the last item
-  const timePeriods = ['daily', 'weekly', 'monthly', 'yearly', 'custom', 'all'];
-
   return (
     <div className="space-y-6">
       {/* Time Period Filter */}
       <div>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Time Period</h3>
         <div className="flex flex-wrap gap-3">
-          {timePeriods.map((p) => (
+          {['all', 'daily', 'weekly', 'monthly', 'yearly', 'custom'].map((p) => (
             <button
               key={p}
               onClick={() => handlePeriodChange(p as VitalsFilters['period'])}

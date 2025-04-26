@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { format } from "date-fns";
 import AddVitalDialog from "./AddVitalDialog";
 import EditVitalDialog from "./EditVitalDialog";
-import VitalsMenu from "./VitalsMenu";
+import VitalsFilters, { VitalsFilters as VitalsFiltersType } from "./VitalsFilters";
 import { Button } from "@/components/ui/button";
 import { Vital } from "@/types/vital";
 import { useRouter } from "next/navigation";
@@ -13,49 +13,44 @@ interface VitalsListProps {
   vitals: Vital[];
 }
 
-// Define a type for the vital data returned from the API
-interface ApiVital {
-  id: string;
-  type: string;
-  value: number;
-  value2?: number;
-  unit: string;
-  notes?: string;
-  recordedAt: string;
-}
-
 export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
   const router = useRouter();
   const [vitals, setVitals] = useState<Vital[]>(initialVitals);
+  const [filteredVitals, setFilteredVitals] = useState<Vital[]>(initialVitals);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingVital, setEditingVital] = useState<Vital | null>(null);
-  const [filter, setFilter] = useState<string>("all");
+  const [showFilters, setShowFilters] = useState(false);
 
   // Update local state when props change
   useEffect(() => {
     setVitals(initialVitals);
+    setFilteredVitals(initialVitals);
   }, [initialVitals]);
 
-  const handleVitalAdded = (newVital: ApiVital) => {
-    // Convert ApiVital to Vital
+  const handleVitalAdded = (newVital: any) => {
+    // Convert the new vital to the correct format
     const vital: Vital = {
       ...newVital,
-      userId: "", // This will be filled by the server
-      createdAt: newVital.recordedAt,
-      updatedAt: newVital.recordedAt,
+      userId: newVital.userId || "",
+      createdAt: newVital.createdAt || newVital.recordedAt,
+      updatedAt: newVital.updatedAt || newVital.recordedAt,
     };
     setVitals((prev) => [vital, ...prev]);
+    setFilteredVitals((prev) => [vital, ...prev]);
   };
 
-  const handleVitalUpdated = (updatedVital: ApiVital) => {
-    // Convert ApiVital to Vital
+  const handleVitalUpdated = (updatedVital: any) => {
+    // Convert the updated vital to the correct format
     const vital: Vital = {
       ...updatedVital,
-      userId: "", // This will be filled by the server
-      createdAt: updatedVital.recordedAt,
-      updatedAt: updatedVital.recordedAt,
+      userId: updatedVital.userId || "",
+      createdAt: updatedVital.createdAt || updatedVital.recordedAt,
+      updatedAt: updatedVital.updatedAt || updatedVital.recordedAt,
     };
     setVitals((prev) => 
+      prev.map((v) => (v.id === vital.id ? vital : v))
+    );
+    setFilteredVitals((prev) => 
       prev.map((v) => (v.id === vital.id ? vital : v))
     );
     // Refresh the page to ensure all data is in sync
@@ -64,61 +59,190 @@ export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
 
   const handleVitalDeleted = (deletedId: string) => {
     setVitals((prev) => prev.filter((vital) => vital.id !== deletedId));
+    setFilteredVitals((prev) => prev.filter((vital) => vital.id !== deletedId));
     // Refresh the page to ensure all data is in sync
     router.refresh();
   };
 
-  const filteredVitals = filter === "all" 
-    ? vitals 
-    : vitals.filter((vital) => vital.type === filter);
+  const handleFilterChange = (filters: VitalsFiltersType) => {
+    let filtered = vitals;
 
+    // Filter by date range
+    filtered = filtered.filter(vital => {
+      const vitalDate = new Date(vital.recordedAt);
+      return vitalDate >= filters.dateRange.start && vitalDate <= filters.dateRange.end;
+    });
+
+    // Filter by vital types if any are selected
+    if (filters.types.length > 0) {
+      filtered = filtered.filter(vital => filters.types.includes(vital.type));
+    }
+
+    setFilteredVitals(filtered);
+  };
+
+  // Get unique vital types from the vitals data
   const uniqueTypes = Array.from(new Set(vitals.map((vital) => vital.type)));
 
-  return (
-    <div className="space-y-6">
-      <VitalsMenu
-        onAddVital={() => setIsAddDialogOpen(true)}
-        onFilterChange={setFilter}
-        currentFilter={filter}
-        availableTypes={uniqueTypes}
-      />
+  // Group vitals by date
+  const vitalsByDate = filteredVitals.reduce((groups, vital) => {
+    const date = format(new Date(vital.recordedAt), "MMM d, yyyy");
+    if (!groups[date]) {
+      groups[date] = [];
+    }
+    groups[date].push(vital);
+    return groups;
+  }, {} as Record<string, typeof filteredVitals>);
 
-      <div className="space-y-4">
-        {filteredVitals.map((vital) => (
-          <div
-            key={vital.id}
-            className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4 hover:shadow-md hover:scale-[1.01] transition-all duration-300 hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-100/80 dark:hover:from-gray-700/50 dark:hover:to-gray-800/50"
+  return (
+    <div className="bg-gradient-to-b from-indigo-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:to-indigo-900/20 min-h-screen">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 sm:text-5xl sm:tracking-tight lg:text-6xl">
+            All Vitals
+          </h1>
+          <p className="mt-5 max-w-xl mx-auto text-xl text-gray-600 dark:text-gray-300">
+            Your complete health metrics history and progress overview.
+          </p>
+        </div>
+
+        {/* Filters Section */}
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 mb-8">
+          <VitalsFilters
+            vitalTypes={uniqueTypes}
+            onFilterChange={handleFilterChange}
+          />
+        </div>
+
+        {/* Log New Vital Button */}
+        <div className="flex justify-center mb-8">
+          <Button
+            onClick={() => setIsAddDialogOpen(true)}
+            className="inline-flex items-center px-8 py-4 border border-transparent text-base font-medium rounded-xl shadow-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 dark:from-indigo-500 dark:to-purple-500 dark:hover:from-indigo-600 dark:hover:to-purple-600 transition-all duration-300"
           >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-                  {vital.type}
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
-                  {format(new Date(vital.recordedAt), "MMM d, yyyy h:mm a")}
+            Log New Vital
+          </Button>
+        </div>
+
+        {/* Vitals Summary */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Vitals</h3>
+            <p className="mt-2 text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+              {filteredVitals.length}
+            </p>
+          </div>
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Vital Types</h3>
+            <p className="mt-2 text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
+              {uniqueTypes.length}
+            </p>
+          </div>
+          <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Date Range</h3>
+            <p className="mt-2 text-lg font-medium text-gray-900 dark:text-white">
+              {filteredVitals.length > 0 
+                ? `${format(new Date(filteredVitals[filteredVitals.length - 1].recordedAt), "MMM d, yyyy")} - ${format(new Date(filteredVitals[0].recordedAt), "MMM d, yyyy")}`
+                : "No data"
+              }
+            </p>
+          </div>
+        </div>
+
+        {/* Vitals List */}
+        <div className="space-y-8">
+          {Object.entries(vitalsByDate).map(([date, dateVitals]) => (
+            <div key={date} className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700 overflow-hidden">
+              <div className="px-8 py-6 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-white">{date}</h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {dateVitals.length} vital{dateVitals.length !== 1 ? "s" : ""}
                 </p>
               </div>
-              <Button
-                variant="ghost"
-                onClick={() => setEditingVital(vital)}
-                className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-              >
-                Edit
-              </Button>
+              <div className="divide-y divide-gray-200 dark:divide-gray-700">
+                {dateVitals.map((vital) => (
+                  <div
+                    key={vital.id}
+                    className={`p-8 transition-all duration-300 relative ${
+                      editingVital?.id === vital.id
+                        ? "bg-purple-50/90 dark:bg-purple-900/80"
+                        : "hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-100/80 dark:hover:from-gray-700/50 dark:hover:to-gray-800/50 hover:shadow-md hover:scale-[1.01]"
+                    }`}
+                  >
+                    {editingVital?.id === vital.id && (
+                      <>
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-100 via-fuchsia-100 to-pink-100 dark:from-purple-800 dark:via-fuchsia-800 dark:to-pink-800 opacity-80 dark:opacity-60" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-200/30 via-fuchsia-200/30 to-pink-200/30 dark:from-purple-600/40 dark:via-fuchsia-600/40 dark:to-pink-600/40 animate-pulse" />
+                      </>
+                    )}
+                    <div className="relative z-10 flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center gap-4">
+                          <h3 className={`text-lg font-medium transition-colors duration-300 ${
+                            editingVital?.id === vital.id
+                              ? "text-indigo-700 dark:text-indigo-400"
+                              : "text-gray-900 dark:text-white"
+                          }`}>
+                            {vital.type}
+                          </h3>
+                          <Button
+                            variant={editingVital?.id === vital.id ? "default" : "ghost"}
+                            size="icon"
+                            onClick={() => setEditingVital(vital)}
+                            className={`h-8 w-8 transition-all duration-300 ${
+                              editingVital?.id === vital.id
+                                ? "bg-indigo-100 dark:bg-indigo-900/50 hover:bg-indigo-200 dark:hover:bg-indigo-800/50"
+                                : ""
+                            }`}
+                          >
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`h-4 w-4 transition-colors duration-300 ${
+                              editingVital?.id === vital.id
+                                ? "text-indigo-700 dark:text-indigo-400"
+                                : ""
+                            }`}>
+                              <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
+                            </svg>
+                          </Button>
+                        </div>
+                        {vital.notes && (
+                          <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">{vital.notes}</p>
+                        )}
+                      </div>
+                      <div className="text-right">
+                        <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Time</p>
+                        <p className={`text-sm transition-colors duration-300 ${
+                          editingVital?.id === vital.id
+                            ? "text-indigo-700 dark:text-indigo-400"
+                            : "text-gray-900 dark:text-white"
+                        }`}>
+                          {format(new Date(vital.recordedAt), "h:mm a")}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="relative z-10 mt-6">
+                      <p className={`text-2xl font-bold transition-colors duration-300 ${
+                        editingVital?.id === vital.id
+                          ? "text-indigo-700 dark:text-indigo-400"
+                          : "bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400"
+                      }`}>
+                        {vital.value} {vital.unit}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="mt-2">
-              <p className="text-2xl font-bold text-indigo-600 dark:text-blue-500">
-                {vital.value}
-                {vital.value2 ? `/${vital.value2}` : ""} {vital.unit}
+          ))}
+          
+          {Object.keys(vitalsByDate).length === 0 && (
+            <div className="text-center py-12 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl shadow-lg border border-gray-100 dark:border-gray-700">
+              <h3 className="text-lg font-medium text-gray-900 dark:text-white">No vitals found</h3>
+              <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                Try adjusting your filters or add a new vital.
               </p>
-              {vital.notes && (
-                <p className="mt-2 text-gray-600 dark:text-gray-300">
-                  {vital.notes}
-                </p>
-              )}
             </div>
-          </div>
-        ))}
+          )}
+        </div>
       </div>
 
       <AddVitalDialog
