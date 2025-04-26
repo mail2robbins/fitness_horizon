@@ -54,6 +54,10 @@ export default function GoalsWrapper() {
     );
   }
 
+  const handleGoalsUpdated = (updatedGoals: Goal[]) => {
+    setGoals(updatedGoals);
+  };
+
   return (
     <div className="space-y-8">
       <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
@@ -69,7 +73,7 @@ export default function GoalsWrapper() {
           </Link>
         </div>
 
-        <GoalsList goals={goals} />
+        <GoalsList goals={goals} onGoalsUpdated={handleGoalsUpdated} />
       </div>
     </div>
   );

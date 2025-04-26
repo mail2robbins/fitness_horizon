@@ -1,15 +1,21 @@
 'use client';
 
+import { useState } from 'react';
 import { Goal } from '@prisma/client';
 import { useTheme } from '@/components/ThemeProvider';
 import Link from 'next/link';
+import { EditGoalDialog } from '@/components/EditGoalDialog';
+import { Button } from '@/components/ui/button';
 
 interface GoalsListProps {
   goals: Goal[];
+  onGoalsUpdated: (updatedGoals: Goal[]) => void;
 }
 
-export default function GoalsList({ goals }: GoalsListProps) {
+export default function GoalsList({ goals, onGoalsUpdated }: GoalsListProps) {
   const { theme } = useTheme();
+  const [editingGoal, setEditingGoal] = useState<Goal | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
 
   const getProgressPercentage = (current: number, target: number) => {
     return Math.min(Math.round((current / target) * 100), 100);
@@ -51,6 +57,24 @@ export default function GoalsList({ goals }: GoalsListProps) {
     }
   };
 
+  const handleEditClick = (goal: Goal) => {
+    setEditingGoal(goal);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleGoalUpdated = async () => {
+    try {
+      const response = await fetch('/api/goals');
+      if (!response.ok) {
+        throw new Error('Failed to fetch updated goals');
+      }
+      const updatedGoals = await response.json();
+      onGoalsUpdated(updatedGoals);
+    } catch (error) {
+      console.error('Error fetching updated goals:', error);
+    }
+  };
+
   if (goals.length === 0) {
     return (
       <div className="text-center py-12">
@@ -72,8 +96,20 @@ export default function GoalsList({ goals }: GoalsListProps) {
           key={goal.id}
           className="bg-white dark:bg-gray-700 rounded-xl p-6 shadow-sm border border-gray-100 dark:border-gray-600"
         >
-          <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{goal.title}</h3>
-          <p className="text-gray-600 dark:text-gray-300 mt-2">{goal.description}</p>
+          <div className="flex justify-between items-start">
+            <div>
+              <h3 className="font-semibold text-lg text-gray-900 dark:text-white">{goal.title}</h3>
+              <p className="text-gray-600 dark:text-gray-300 mt-2">{goal.description}</p>
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleEditClick(goal)}
+              className="ml-4"
+            >
+              Edit
+            </Button>
+          </div>
           <div className="mt-4 flex justify-between items-center">
             <span className="text-sm text-gray-500 dark:text-gray-400">
               Target Date: {new Date(goal.endDate).toLocaleDateString()}
@@ -88,6 +124,15 @@ export default function GoalsList({ goals }: GoalsListProps) {
           </div>
         </div>
       ))}
+      
+      {editingGoal && (
+        <EditGoalDialog
+          goal={editingGoal}
+          open={isEditDialogOpen}
+          onOpenChange={setIsEditDialogOpen}
+          onGoalUpdated={handleGoalUpdated}
+        />
+      )}
     </div>
   );
 } 
