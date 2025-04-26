@@ -45,7 +45,13 @@ export default function AddVitalDialog({
 }: AddVitalDialogProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    type: string;
+    value: string;
+    value2: string;
+    unit: string;
+    notes: string;
+  }>({
     type: vitalTypes[0].type,
     value: "",
     value2: "",
@@ -57,15 +63,23 @@ export default function AddVitalDialog({
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-
-    // Update unit when type changes
+    
+    // Update unit and reset value2 when type changes
     if (name === "type") {
       const selectedType = vitalTypes.find((t) => t.type === value);
       if (selectedType) {
-        setFormData((prev) => ({ ...prev, unit: selectedType.unit }));
+        setFormData((prev) => ({ 
+          ...prev, 
+          type: value,
+          unit: selectedType.unit,
+          // Reset value2 if the new type doesn't need it
+          value2: selectedType.hasSecondValue ? prev.value2 : ""
+        }));
+        return;
       }
     }
+    
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {

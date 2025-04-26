@@ -59,6 +59,21 @@ export default function EditVitalDialog({
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
+    
+    // Reset value2 when type changes to one that doesn't need it
+    if (name === "type") {
+      const selectedType = vitalTypes.find((vt) => vt.type === value);
+      if (selectedType) {
+        setFormData((prev) => ({
+          ...prev,
+          type: value,
+          // Reset value2 if the new type doesn't need it
+          value2: selectedType.hasSecondValue ? prev.value2 : ""
+        }));
+        return;
+      }
+    }
+    
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
