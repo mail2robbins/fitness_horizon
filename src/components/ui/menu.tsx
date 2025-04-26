@@ -8,17 +8,30 @@ const Menu = DropdownMenu.Root;
 
 const MenuButton = React.forwardRef<
   HTMLButtonElement,
-  React.ButtonHTMLAttributes<HTMLButtonElement>
->(({ className, ...props }, ref) => (
+  React.ButtonHTMLAttributes<HTMLButtonElement> & {
+    as?: React.ElementType;
+  }
+>(({ className, as: Component, ...props }, ref) => (
   <DropdownMenu.Trigger asChild>
-    <button
-      ref={ref}
-      className={cn(
-        "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
-        className
-      )}
-      {...props}
-    />
+    {Component ? (
+      <Component
+        ref={ref}
+        className={cn(
+          "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
+          className
+        )}
+        {...props}
+      />
+    ) : (
+      <button
+        ref={ref}
+        className={cn(
+          "inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none",
+          className
+        )}
+        {...props}
+      />
+    )}
   </DropdownMenu.Trigger>
 ));
 MenuButton.displayName = "MenuButton";
@@ -42,7 +55,9 @@ MenuList.displayName = "MenuList";
 
 const MenuItem = React.forwardRef<
   HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement>
+  React.HTMLAttributes<HTMLDivElement> & {
+    onSelect?: (event: Event) => void;
+  }
 >(({ className, ...props }, ref) => (
   <DropdownMenu.Item
     ref={ref}

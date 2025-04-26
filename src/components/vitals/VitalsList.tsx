@@ -93,25 +93,35 @@ export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
     });
   };
 
-  const handleVitalAdded = (newVital: any) => {
+  const handleVitalAdded = (newVital: Partial<Vital>) => {
     // Convert the new vital to the correct format
     const vital: Vital = {
       ...newVital,
       userId: newVital.userId || "",
-      createdAt: newVital.createdAt || newVital.recordedAt,
-      updatedAt: newVital.updatedAt || newVital.recordedAt,
+      createdAt: newVital.createdAt || newVital.recordedAt || new Date().toISOString(),
+      updatedAt: newVital.updatedAt || newVital.recordedAt || new Date().toISOString(),
+      recordedAt: newVital.recordedAt || new Date().toISOString(),
+      id: newVital.id || "",
+      type: newVital.type || "",
+      value: newVital.value || 0,
+      unit: newVital.unit || "",
     };
     setVitals((prev) => [vital, ...prev]);
     setFilteredVitals((prev) => [vital, ...prev]);
   };
 
-  const handleVitalUpdated = (updatedVital: any) => {
+  const handleVitalUpdated = (updatedVital: Partial<Vital>) => {
     // Convert the updated vital to the correct format
     const vital: Vital = {
       ...updatedVital,
       userId: updatedVital.userId || "",
-      createdAt: updatedVital.createdAt || updatedVital.recordedAt,
-      updatedAt: updatedVital.updatedAt || updatedVital.recordedAt,
+      createdAt: updatedVital.createdAt || updatedVital.recordedAt || new Date().toISOString(),
+      updatedAt: updatedVital.updatedAt || updatedVital.recordedAt || new Date().toISOString(),
+      recordedAt: updatedVital.recordedAt || new Date().toISOString(),
+      id: updatedVital.id || "",
+      type: updatedVital.type || "",
+      value: updatedVital.value || 0,
+      unit: updatedVital.unit || "",
     };
     
     // Update the vitals state
