@@ -11,39 +11,56 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 
-interface EditWorkoutDialogProps {
-  workout: {
+interface EditMealDialogProps {
+  meal: {
     id: string;
+    name: string;
     type: string;
-    duration: number;
-    caloriesBurned: number;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
     notes?: string | null;
   };
   isOpen: boolean;
   onClose: () => void;
-  onWorkoutUpdated?: (updatedWorkout: {
+  onMealUpdated?: (updatedMeal: {
     id: string;
+    name: string;
     type: string;
-    duration: number;
-    caloriesBurned: number;
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
     notes?: string | null;
-    completedAt: string;
+    consumedAt: string;
   }) => void;
 }
 
-export default function EditWorkoutDialog({
-  workout,
+const mealTypes = [
+  "Breakfast",
+  "Lunch",
+  "Dinner",
+  "Snack",
+  "Other",
+] as const;
+
+export default function EditMealDialog({
+  meal,
   isOpen,
   onClose,
-  onWorkoutUpdated,
-}: EditWorkoutDialogProps) {
+  onMealUpdated,
+}: EditMealDialogProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
-    type: workout.type,
-    duration: workout.duration.toString(),
-    caloriesBurned: workout.caloriesBurned.toString(),
-    notes: workout.notes || "",
+    name: meal.name,
+    type: meal.type,
+    calories: meal.calories.toString(),
+    protein: meal.protein.toString(),
+    carbs: meal.carbs.toString(),
+    fat: meal.fat.toString(),
+    notes: meal.notes || "",
   });
 
   const handleChange = (
@@ -58,7 +75,7 @@ export default function EditWorkoutDialog({
     setIsLoading(true);
 
     try {
-      const response = await fetch(`/api/workouts/${workout.id}`, {
+      const response = await fetch(`/api/meals/${meal.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -67,20 +84,19 @@ export default function EditWorkoutDialog({
       });
 
       if (!response.ok) {
-        throw new Error("Failed to update workout");
+        throw new Error("Failed to update meal");
       }
 
-      const updatedWorkout = await response.json();
+      const updatedMeal = await response.json();
       
-      // Call the parent component's callback with the updated workout
-      if (onWorkoutUpdated) {
-        onWorkoutUpdated(updatedWorkout);
+      if (onMealUpdated) {
+        onMealUpdated(updatedMeal);
       }
 
       router.refresh();
       onClose();
     } catch (error) {
-      console.error("Error updating workout:", error);
+      console.error("Error updating meal:", error);
     } finally {
       setIsLoading(false);
     }
@@ -90,15 +106,33 @@ export default function EditWorkoutDialog({
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white">Edit Workout</DialogTitle>
+          <DialogTitle className="text-xl font-semibold text-gray-900 dark:text-white">Edit Meal</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-6">
+          <div>
+            <label
+              htmlFor="name"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
+            >
+              Meal Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+              className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-blue-500 focus:border-transparent transition-colors"
+            />
+          </div>
+
           <div>
             <label
               htmlFor="type"
               className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
             >
-              Workout Type
+              Meal Type
             </label>
             <select
               id="type"
@@ -108,49 +142,86 @@ export default function EditWorkoutDialog({
               required
               className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-blue-500 focus:border-transparent transition-colors"
             >
-              <option value="">Select a type</option>
-              <option value="Strength Training">Strength Training</option>
-              <option value="Cardio">Cardio</option>
-              <option value="Flexibility">Flexibility</option>
-              <option value="HIIT">HIIT</option>
-              <option value="Other">Other</option>
+              {mealTypes.map((type) => (
+                <option key={type} value={type}>
+                  {type}
+                </option>
+              ))}
             </select>
           </div>
 
           <div>
             <label
-              htmlFor="duration"
+              htmlFor="calories"
               className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
             >
-              Duration (minutes)
+              Calories
             </label>
             <input
               type="number"
-              id="duration"
-              name="duration"
-              value={formData.duration}
+              id="calories"
+              name="calories"
+              value={formData.calories}
               onChange={handleChange}
               required
-              min="1"
+              min="0"
               className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-blue-500 focus:border-transparent transition-colors"
             />
           </div>
 
           <div>
             <label
-              htmlFor="caloriesBurned"
+              htmlFor="protein"
               className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
             >
-              Calories Burned
+              Protein (g)
             </label>
             <input
               type="number"
-              id="caloriesBurned"
-              name="caloriesBurned"
-              value={formData.caloriesBurned}
+              id="protein"
+              name="protein"
+              value={formData.protein}
               onChange={handleChange}
               required
-              min="1"
+              min="0"
+              className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-blue-500 focus:border-transparent transition-colors"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="carbs"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
+            >
+              Carbs (g)
+            </label>
+            <input
+              type="number"
+              id="carbs"
+              name="carbs"
+              value={formData.carbs}
+              onChange={handleChange}
+              required
+              min="0"
+              className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-blue-500 focus:border-transparent transition-colors"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="fat"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2"
+            >
+              Fat (g)
+            </label>
+            <input
+              type="number"
+              id="fat"
+              name="fat"
+              value={formData.fat}
+              onChange={handleChange}
+              required
+              min="0"
               className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-blue-500 focus:border-transparent transition-colors"
             />
           </div>

@@ -1,9 +1,12 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { format } from "date-fns";
 import MealFilters, { MealFilters as MealFiltersType } from "./MealFilters";
+import EditMealDialog from "./EditMealDialog";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
 
 interface Meal {
   id: string;
@@ -23,7 +26,14 @@ interface MealsListProps {
 
 export default function MealsList({ initialMeals }: MealsListProps) {
   const [filteredMeals, setFilteredMeals] = useState(initialMeals);
+  const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
+  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const mealTypes = Array.from(new Set(initialMeals.map(meal => meal.type)));
+
+  // Update the meals list when initialMeals changes
+  useEffect(() => {
+    setFilteredMeals(initialMeals);
+  }, [initialMeals]);
 
   const handleFilterChange = (filters: MealFiltersType) => {
     const filtered = initialMeals.filter(meal => {
@@ -34,6 +44,25 @@ export default function MealsList({ initialMeals }: MealsListProps) {
     });
 
     setFilteredMeals(filtered);
+  };
+
+  const handleEditClick = (meal: Meal) => {
+    setSelectedMeal(meal);
+    setIsEditDialogOpen(true);
+  };
+
+  const handleEditDialogClose = () => {
+    setSelectedMeal(null);
+    setIsEditDialogOpen(false);
+  };
+
+  const handleMealUpdated = (updatedMeal: Meal) => {
+    // Update the meals list with the updated meal
+    setFilteredMeals(prevMeals => 
+      prevMeals.map(meal => 
+        meal.id === updatedMeal.id ? updatedMeal : meal
+      )
+    );
   };
 
   // Calculate total stats for filtered meals
@@ -84,7 +113,7 @@ export default function MealsList({ initialMeals }: MealsListProps) {
         </div>
 
         {/* Nutrition Summary */}
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-12">
           <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
             <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">Total Meals</h3>
             <p className="mt-2 text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
@@ -129,13 +158,48 @@ export default function MealsList({ initialMeals }: MealsListProps) {
               </div>
               <div className="divide-y divide-gray-200 dark:divide-gray-700">
                 {dateMeals.map((meal) => (
-                  <div key={meal.id} className="p-8 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors">
-                    <div className="flex justify-between items-start">
+                  <div
+                    key={meal.id}
+                    className={`p-8 transition-all duration-300 relative ${
+                      selectedMeal?.id === meal.id
+                        ? "bg-purple-50/90 dark:bg-purple-900/80"
+                        : "hover:bg-gradient-to-r hover:from-gray-50/80 hover:to-gray-100/80 dark:hover:from-gray-700/50 dark:hover:to-gray-800/50 hover:shadow-md hover:scale-[1.01]"
+                    }`}
+                  >
+                    {selectedMeal?.id === meal.id && (
+                      <>
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-100 via-fuchsia-100 to-pink-100 dark:from-purple-800 dark:via-fuchsia-800 dark:to-pink-800 opacity-80 dark:opacity-60" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-purple-200/30 via-fuchsia-200/30 to-pink-200/30 dark:from-purple-600/40 dark:via-fuchsia-600/40 dark:to-pink-600/40 animate-pulse" />
+                      </>
+                    )}
+                    <div className="relative z-10 flex justify-between items-start">
                       <div>
-                        <h3 className="text-lg font-medium text-gray-900 dark:text-white">
-                          {meal.name}
-                        </h3>
-                        <span className="inline-block mt-1 px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50 text-indigo-800 dark:text-indigo-200">
+                        <div className="flex items-center gap-4">
+                          <h3 className={`text-lg font-medium transition-colors duration-300 ${
+                            selectedMeal?.id === meal.id
+                              ? "text-indigo-700 dark:text-indigo-400"
+                              : "text-gray-900 dark:text-white"
+                          }`}>
+                            {meal.name}
+                          </h3>
+                          <Button
+                            variant={selectedMeal?.id === meal.id ? "default" : "ghost"}
+                            size="icon"
+                            onClick={() => handleEditClick(meal)}
+                            className={`h-8 w-8 transition-all duration-300 ${
+                              selectedMeal?.id === meal.id
+                                ? "bg-indigo-100 dark:bg-indigo-900/50 hover:bg-indigo-200 dark:hover:bg-indigo-800/50"
+                                : ""
+                            }`}
+                          >
+                            <Pencil className={`h-4 w-4 transition-colors duration-300 ${
+                              selectedMeal?.id === meal.id
+                                ? "text-indigo-700 dark:text-indigo-400"
+                                : ""
+                            }`} />
+                          </Button>
+                        </div>
+                        <span className="inline-block mt-2 px-3 py-1 text-xs font-medium rounded-full bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/50 dark:to-purple-900/50 text-indigo-800 dark:text-indigo-200">
                           {meal.type}
                         </span>
                         {meal.notes && (
@@ -144,33 +208,53 @@ export default function MealsList({ initialMeals }: MealsListProps) {
                       </div>
                       <div className="text-right">
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Time</p>
-                        <p className="text-sm text-gray-900 dark:text-white">
+                        <p className={`text-sm transition-colors duration-300 ${
+                          selectedMeal?.id === meal.id
+                            ? "text-indigo-700 dark:text-indigo-400"
+                            : "text-gray-900 dark:text-white"
+                        }`}>
                           {format(new Date(meal.consumedAt), "h:mm a")}
                         </p>
                       </div>
                     </div>
-                    <div className="mt-4 grid grid-cols-4 gap-4">
+                    <div className="relative z-10 grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
                       <div>
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Calories</p>
-                        <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                        <p className={`text-lg font-semibold transition-colors duration-300 ${
+                          selectedMeal?.id === meal.id
+                            ? "text-indigo-700 dark:text-indigo-400"
+                            : "bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400"
+                        }`}>
                           {meal.calories}
                         </p>
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Protein</p>
-                        <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                        <p className={`text-lg font-semibold transition-colors duration-300 ${
+                          selectedMeal?.id === meal.id
+                            ? "text-indigo-700 dark:text-indigo-400"
+                            : "bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400"
+                        }`}>
                           {meal.protein}g
                         </p>
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Carbs</p>
-                        <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                        <p className={`text-lg font-semibold transition-colors duration-300 ${
+                          selectedMeal?.id === meal.id
+                            ? "text-indigo-700 dark:text-indigo-400"
+                            : "bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400"
+                        }`}>
                           {meal.carbs}g
                         </p>
                       </div>
                       <div>
                         <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Fat</p>
-                        <p className="text-lg font-semibold text-gray-900 dark:text-white">
+                        <p className={`text-lg font-semibold transition-colors duration-300 ${
+                          selectedMeal?.id === meal.id
+                            ? "text-indigo-700 dark:text-indigo-400"
+                            : "bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400"
+                        }`}>
                           {meal.fat}g
                         </p>
                       </div>
@@ -191,6 +275,15 @@ export default function MealsList({ initialMeals }: MealsListProps) {
           )}
         </div>
       </div>
+
+      {selectedMeal && (
+        <EditMealDialog
+          meal={selectedMeal}
+          isOpen={isEditDialogOpen}
+          onClose={handleEditDialogClose}
+          onMealUpdated={handleMealUpdated}
+        />
+      )}
     </div>
   );
 } 
