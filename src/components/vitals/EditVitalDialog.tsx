@@ -17,6 +17,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { VitalsFilters } from "./VitalsFilters";
 
 interface Vital {
   id: string;
@@ -34,6 +35,7 @@ interface EditVitalDialogProps {
   onClose: () => void;
   onVitalUpdated: (updatedVital: Vital) => void;
   onVitalDeleted: (id: string) => void;
+  currentFilters?: VitalsFilters;
 }
 
 const vitalTypes = [
@@ -55,6 +57,7 @@ export default function EditVitalDialog({
   onClose,
   onVitalUpdated,
   onVitalDeleted,
+  currentFilters,
 }: EditVitalDialogProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -171,7 +174,7 @@ export default function EditVitalDialog({
               >
                 {vitalTypes.map((vt) => (
                   <option key={vt.type} value={vt.type}>
-                    {vt.type}
+                    {vt.type} ({vt.unit})
                   </option>
                 ))}
               </Select>

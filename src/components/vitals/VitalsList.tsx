@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { format } from "date-fns";
+import { format, startOfDay, endOfDay } from "date-fns";
 import AddVitalDialog from "./AddVitalDialog";
 import EditVitalDialog from "./EditVitalDialog";
 import VitalsFilters, { VitalsFilters as VitalsFiltersType } from "./VitalsFilters";
@@ -20,25 +20,78 @@ export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingVital, setEditingVital] = useState<Vital | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const [currentFilters, setCurrentFilters] = useState<VitalsFiltersType>({
+    dateRange: {
+      start: startOfDay(new Date()),
+      end: endOfDay(new Date()),
+    },
+    types: [],
+    period: 'daily',
+  });
 
   // Update local state when props change
   useEffect(() => {
     setVitals(initialVitals);
     
-    // Apply initial daily filter
+    // Check if we have saved filters in localStorage
+    const savedFilters = localStorage.getItem('vitalsFilters');
+    if (savedFilters) {
+      try {
+        const parsedFilters = JSON.parse(savedFilters);
+        // Convert string dates back to Date objects
+        parsedFilters.dateRange.start = new Date(parsedFilters.dateRange.start);
+        parsedFilters.dateRange.end = new Date(parsedFilters.dateRange.end);
+        
+        // Apply the saved filters to the new data
+        let filtered = initialVitals;
+
+        // Filter by date range
+        filtered = filtered.filter(vital => {
+          const vitalDate = new Date(vital.recordedAt);
+          return vitalDate >= parsedFilters.dateRange.start && vitalDate <= parsedFilters.dateRange.end;
+        });
+
+        // Filter by vital types if any are selected
+        if (parsedFilters.types.length > 0) {
+          filtered = filtered.filter(vital => parsedFilters.types.includes(vital.type));
+        }
+
+        setFilteredVitals(filtered);
+        setCurrentFilters(parsedFilters);
+      } catch (error) {
+        console.error('Error parsing saved filters:', error);
+        // Fall back to default daily filter if there's an error
+        applyDefaultDailyFilter(initialVitals);
+      }
+    } else {
+      // Apply default daily filter if no saved filters
+      applyDefaultDailyFilter(initialVitals);
+    }
+  }, [initialVitals]);
+
+  // Helper function to apply default daily filter
+  const applyDefaultDailyFilter = (vitals: Vital[]) => {
     const today = new Date();
     const startOfToday = new Date(today);
     startOfToday.setHours(0, 0, 0, 0);
     const endOfToday = new Date(today);
     endOfToday.setHours(23, 59, 59, 999);
     
-    const filtered = initialVitals.filter(vital => {
+    const filtered = vitals.filter(vital => {
       const vitalDate = new Date(vital.recordedAt);
       return vitalDate >= startOfToday && vitalDate <= endOfToday;
     });
     
     setFilteredVitals(filtered);
-  }, [initialVitals]);
+    setCurrentFilters({
+      dateRange: {
+        start: startOfToday,
+        end: endOfToday,
+      },
+      types: [],
+      period: 'daily',
+    });
+  };
 
   const handleVitalAdded = (newVital: any) => {
     // Convert the new vital to the correct format
@@ -60,24 +113,64 @@ export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
       createdAt: updatedVital.createdAt || updatedVital.recordedAt,
       updatedAt: updatedVital.updatedAt || updatedVital.recordedAt,
     };
+    
+    // Update the vitals state
     setVitals((prev) => 
       prev.map((v) => (v.id === vital.id ? vital : v))
     );
-    setFilteredVitals((prev) => 
-      prev.map((v) => (v.id === vital.id ? vital : v))
-    );
-    // Refresh the page to ensure all data is in sync
-    router.refresh();
+    
+    // Apply current filters to the updated data
+    let filtered = vitals.map((v) => (v.id === vital.id ? vital : v));
+    
+    // Filter by date range
+    filtered = filtered.filter(vital => {
+      const vitalDate = new Date(vital.recordedAt);
+      return vitalDate >= currentFilters.dateRange.start && vitalDate <= currentFilters.dateRange.end;
+    });
+
+    // Filter by vital types if any are selected
+    if (currentFilters.types.length > 0) {
+      filtered = filtered.filter(vital => currentFilters.types.includes(vital.type));
+    }
+    
+    setFilteredVitals(filtered);
+    
+    // No need to refresh the page since we're handling the update locally
+    // router.refresh();
   };
 
   const handleVitalDeleted = (deletedId: string) => {
+    // Update the vitals state
     setVitals((prev) => prev.filter((vital) => vital.id !== deletedId));
-    setFilteredVitals((prev) => prev.filter((vital) => vital.id !== deletedId));
-    // Refresh the page to ensure all data is in sync
-    router.refresh();
+    
+    // Apply current filters to the updated data
+    let filtered = vitals.filter((vital) => vital.id !== deletedId);
+    
+    // Filter by date range
+    filtered = filtered.filter(vital => {
+      const vitalDate = new Date(vital.recordedAt);
+      return vitalDate >= currentFilters.dateRange.start && vitalDate <= currentFilters.dateRange.end;
+    });
+
+    // Filter by vital types if any are selected
+    if (currentFilters.types.length > 0) {
+      filtered = filtered.filter(vital => currentFilters.types.includes(vital.type));
+    }
+    
+    setFilteredVitals(filtered);
+    
+    // No need to refresh the page since we're handling the deletion locally
+    // router.refresh();
   };
 
   const handleFilterChange = (filters: VitalsFiltersType) => {
+    // Update the current filters state
+    setCurrentFilters(filters);
+    
+    // Save filters to localStorage for persistence
+    localStorage.setItem('vitalsFilters', JSON.stringify(filters));
+    
+    // Apply filters to the data
     let filtered = vitals;
 
     // Filter by date range
@@ -238,7 +331,7 @@ export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
                           ? "text-indigo-700 dark:text-indigo-400"
                           : "bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400"
                       }`}>
-                        {vital.value} {vital.unit}
+                        {vital.value}{vital.value2 ? `/${vital.value2}` : ""} {vital.unit}
                       </p>
                     </div>
                   </div>
@@ -258,12 +351,15 @@ export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
         </div>
       </div>
 
+      {/* Add Vital Dialog */}
       <AddVitalDialog
         isOpen={isAddDialogOpen}
         onClose={() => setIsAddDialogOpen(false)}
         onVitalAdded={handleVitalAdded}
+        vitalTypes={uniqueTypes}
       />
 
+      {/* Edit Vital Dialog */}
       {editingVital && (
         <EditVitalDialog
           vital={editingVital}
@@ -271,6 +367,7 @@ export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
           onClose={() => setEditingVital(null)}
           onVitalUpdated={handleVitalUpdated}
           onVitalDeleted={handleVitalDeleted}
+          currentFilters={currentFilters}
         />
       )}
     </div>

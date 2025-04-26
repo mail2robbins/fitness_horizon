@@ -23,9 +23,11 @@ interface AddVitalDialogProps {
     notes?: string;
     recordedAt: string;
   }) => void;
+  vitalTypes?: string[];
 }
 
-const vitalTypes = [
+// Default vital types if none are provided
+const defaultVitalTypes = [
   { type: "BMI", unit: "kg/m²", hasSecondValue: false },
   { type: "Blood Sugar", unit: "mg/dL", hasSecondValue: false },
   { type: "Blood Pressure", unit: "mmHg", hasSecondValue: true },
@@ -42,9 +44,20 @@ export default function AddVitalDialog({
   isOpen,
   onClose,
   onVitalAdded,
+  vitalTypes: providedVitalTypes,
 }: AddVitalDialogProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
+  
+  // Use provided vital types or default to the hardcoded ones
+  const vitalTypes = providedVitalTypes 
+    ? providedVitalTypes.map(type => {
+        // Find the matching vital type from the default list to get unit and hasSecondValue
+        const defaultType = defaultVitalTypes.find(t => t.type === type);
+        return defaultType || { type, unit: "", hasSecondValue: false };
+      })
+    : defaultVitalTypes;
+  
   const [formData, setFormData] = useState<{
     type: string;
     value: string;
