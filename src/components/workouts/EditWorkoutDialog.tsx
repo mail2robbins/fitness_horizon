@@ -21,7 +21,14 @@ interface EditWorkoutDialogProps {
   };
   isOpen: boolean;
   onClose: () => void;
-  onWorkoutUpdated?: (updatedWorkout: any) => void;
+  onWorkoutUpdated?: (updatedWorkout: {
+    id: string;
+    type: string;
+    duration: number;
+    caloriesBurned: number;
+    notes?: string | null;
+    completedAt: string;
+  }) => void;
 }
 
 export default function EditWorkoutDialog({
