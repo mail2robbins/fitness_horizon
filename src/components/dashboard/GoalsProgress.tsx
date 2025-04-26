@@ -2,6 +2,7 @@
 
 import { format } from "date-fns";
 import type { Goal } from "@/types/prisma";
+import Link from 'next/link';
 
 interface GoalsProgressProps {
   goals: Goal[];
@@ -75,12 +76,12 @@ export default function GoalsProgress({ goals }: GoalsProgressProps) {
         })}
       </div>
       <div className="mt-6 text-center">
-        <a
+        <Link
           href="/goals"
           className="text-sm font-medium text-indigo-600 hover:text-indigo-900 dark:text-indigo-400 dark:hover:text-indigo-300 transition-colors duration-300"
         >
           View all goals →
-        </a>
+        </Link>
       </div>
     </div>
   );

@@ -5,6 +5,7 @@ import LoadingSpinner from '@/components/LoadingSpinner';
 import GoalsList from './GoalsList';
 import { Goal } from '@prisma/client';
 import { useSession } from 'next-auth/react';
+import Link from 'next/link';
 
 export default function GoalsWrapper() {
   const { data: session } = useSession();
@@ -60,12 +61,12 @@ export default function GoalsWrapper() {
           <h2 className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">
             Your Goals
           </h2>
-          <a
+          <Link
             href="/goals/new"
             className="inline-flex items-center px-6 py-2 border border-transparent text-base font-medium rounded-xl shadow-sm text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 dark:from-indigo-500 dark:to-purple-500 dark:hover:from-indigo-600 dark:hover:to-purple-600 transition-all duration-300"
           >
             Add New Goal
-          </a>
+          </Link>
         </div>
 
         <GoalsList goals={goals} />
