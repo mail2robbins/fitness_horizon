@@ -77,7 +77,6 @@ export default function EditWorkoutDialog({
         onWorkoutUpdated(updatedWorkout);
       }
 
-      router.refresh();
       onClose();
     } catch (error) {
       console.error("Error updating workout:", error);

@@ -22,18 +22,22 @@ interface WorkoutsListProps {
 }
 
 export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
+  const [workouts, setWorkouts] = useState(initialWorkouts);
   const [filteredWorkouts, setFilteredWorkouts] = useState(initialWorkouts);
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const workoutTypes = Array.from(new Set(initialWorkouts.map(workout => workout.type)));
+  const [currentFilters, setCurrentFilters] = useState<WorkoutFiltersType | null>(null);
+  const workoutTypes = Array.from(new Set(workouts.map(workout => workout.type)));
 
   // Update the workouts list when initialWorkouts changes
   useEffect(() => {
+    setWorkouts(initialWorkouts);
     setFilteredWorkouts(initialWorkouts);
   }, [initialWorkouts]);
 
   const handleFilterChange = (filters: WorkoutFiltersType) => {
-    const filtered = initialWorkouts.filter(workout => {
+    setCurrentFilters(filters);
+    const filtered = workouts.filter(workout => {
       const workoutDate = new Date(workout.completedAt);
       const isInDateRange = workoutDate >= filters.dateRange.start && workoutDate <= filters.dateRange.end;
       const isTypeMatched = filters.types.length === 0 || filters.types.includes(workout.type);
@@ -54,12 +58,24 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
   };
 
   const handleWorkoutUpdated = (updatedWorkout: Workout) => {
-    // Update the workouts list with the updated workout
-    setFilteredWorkouts(prevWorkouts => 
-      prevWorkouts.map(workout => 
-        workout.id === updatedWorkout.id ? updatedWorkout : workout
-      )
+    // Update the workouts state with the updated workout
+    const updatedWorkouts = workouts.map(workout => 
+      workout.id === updatedWorkout.id ? updatedWorkout : workout
     );
+    setWorkouts(updatedWorkouts);
+
+    // If there are active filters, reapply them to the updated workouts
+    if (currentFilters) {
+      const filtered = updatedWorkouts.filter(workout => {
+        const workoutDate = new Date(workout.completedAt);
+        const isInDateRange = workoutDate >= currentFilters.dateRange.start && workoutDate <= currentFilters.dateRange.end;
+        const isTypeMatched = currentFilters.types.length === 0 || currentFilters.types.includes(workout.type);
+        return isInDateRange && isTypeMatched;
+      });
+      setFilteredWorkouts(filtered);
+    } else {
+      setFilteredWorkouts(updatedWorkouts);
+    }
   };
 
   // Calculate total stats for filtered workouts

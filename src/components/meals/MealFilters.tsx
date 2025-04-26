@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { format, subDays, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
 
 interface MealFiltersProps {
@@ -19,11 +19,22 @@ export interface MealFilters {
 
 export default function MealFilters({ mealTypes, onFilterChange }: MealFiltersProps) {
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
-  const [period, setPeriod] = useState<MealFilters['period']>('all');
+  const [period, setPeriod] = useState<MealFilters['period']>('daily');
   const [customDateRange, setCustomDateRange] = useState({
     start: format(new Date(), 'yyyy-MM-dd'),
     end: format(new Date(), 'yyyy-MM-dd'),
   });
+
+  // Initialize with daily filter on component mount
+  useEffect(() => {
+    const start = startOfDay(new Date());
+    const end = endOfDay(new Date());
+    onFilterChange({
+      dateRange: { start, end },
+      types: selectedTypes,
+      period: 'daily',
+    });
+  }, []);
 
   const handlePeriodChange = (newPeriod: MealFilters['period']) => {
     setPeriod(newPeriod);
@@ -136,7 +147,7 @@ export default function MealFilters({ mealTypes, onFilterChange }: MealFiltersPr
       <div>
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">Time Period</h3>
         <div className="flex flex-wrap gap-3">
-          {['all', 'daily', 'weekly', 'monthly', 'yearly', 'custom'].map((p) => (
+          {['daily', 'weekly', 'monthly', 'yearly', 'custom', 'all'].map((p) => (
             <button
               key={p}
               onClick={() => handlePeriodChange(p as MealFilters['period'])}

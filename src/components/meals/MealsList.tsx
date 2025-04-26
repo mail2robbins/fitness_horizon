@@ -25,18 +25,22 @@ interface MealsListProps {
 }
 
 export default function MealsList({ initialMeals }: MealsListProps) {
+  const [meals, setMeals] = useState(initialMeals);
   const [filteredMeals, setFilteredMeals] = useState(initialMeals);
   const [selectedMeal, setSelectedMeal] = useState<Meal | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const mealTypes = Array.from(new Set(initialMeals.map(meal => meal.type)));
+  const [currentFilters, setCurrentFilters] = useState<MealFiltersType | null>(null);
+  const mealTypes = Array.from(new Set(meals.map(meal => meal.type)));
 
   // Update the meals list when initialMeals changes
   useEffect(() => {
+    setMeals(initialMeals);
     setFilteredMeals(initialMeals);
   }, [initialMeals]);
 
   const handleFilterChange = (filters: MealFiltersType) => {
-    const filtered = initialMeals.filter(meal => {
+    setCurrentFilters(filters);
+    const filtered = meals.filter(meal => {
       const mealDate = new Date(meal.consumedAt);
       const isInDateRange = mealDate >= filters.dateRange.start && mealDate <= filters.dateRange.end;
       const isTypeMatched = filters.types.length === 0 || filters.types.includes(meal.type);
@@ -57,12 +61,24 @@ export default function MealsList({ initialMeals }: MealsListProps) {
   };
 
   const handleMealUpdated = (updatedMeal: Meal) => {
-    // Update the meals list with the updated meal
-    setFilteredMeals(prevMeals => 
-      prevMeals.map(meal => 
-        meal.id === updatedMeal.id ? updatedMeal : meal
-      )
+    // Update the meals state with the updated meal
+    const updatedMeals = meals.map(meal => 
+      meal.id === updatedMeal.id ? updatedMeal : meal
     );
+    setMeals(updatedMeals);
+
+    // If there are active filters, reapply them to the updated meals
+    if (currentFilters) {
+      const filtered = updatedMeals.filter(meal => {
+        const mealDate = new Date(meal.consumedAt);
+        const isInDateRange = mealDate >= currentFilters.dateRange.start && mealDate <= currentFilters.dateRange.end;
+        const isTypeMatched = currentFilters.types.length === 0 || currentFilters.types.includes(meal.type);
+        return isInDateRange && isTypeMatched;
+      });
+      setFilteredMeals(filtered);
+    } else {
+      setFilteredMeals(updatedMeals);
+    }
   };
 
   // Calculate total stats for filtered meals

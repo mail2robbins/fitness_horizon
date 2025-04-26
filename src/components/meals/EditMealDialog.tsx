@@ -93,7 +93,6 @@ export default function EditMealDialog({
         onMealUpdated(updatedMeal);
       }
 
-      router.refresh();
       onClose();
     } catch (error) {
       console.error("Error updating meal:", error);
