@@ -29,12 +29,12 @@ export default function VitalsPage() {
     try {
       const response = await fetch("/api/vitals/today");
       if (!response.ok) {
-        throw new Error("Failed to fetch today's vitals");
+        throw new Error("Failed to fetch today&apos;s vitals");
       }
       const data = await response.json();
       setTodayVitals(data);
     } catch (error) {
-      console.error("Error fetching today's vitals:", error);
+      console.error("Error fetching today&apos;s vitals:", error);
     } finally {
       setIsLoading(false);
     }
@@ -74,7 +74,7 @@ export default function VitalsPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="text-center mb-12">
             <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 sm:text-5xl sm:tracking-tight lg:text-6xl">
-              Today's Vitals
+              Today&apos;s Vitals
             </h1>
             <p className="mt-5 max-w-xl mx-auto text-xl text-gray-600 dark:text-gray-300">
               Track your health vitals for {format(new Date(), "MMMM d, yyyy")}
@@ -91,7 +91,7 @@ export default function VitalsPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="text-center mb-12">
           <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 sm:text-5xl sm:tracking-tight lg:text-6xl">
-            Today's Vitals
+            Today&apos;s Vitals
           </h1>
           <p className="mt-5 max-w-xl mx-auto text-xl text-gray-600 dark:text-gray-300">
             Track your health vitals for {format(new Date(), "MMMM d, yyyy")}
