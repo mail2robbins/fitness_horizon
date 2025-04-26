@@ -5,6 +5,7 @@ import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import Card, { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import LoadingSpinner from "@/components/LoadingSpinner";
+import VitalsFilters, { VitalsFilters as VitalsFiltersType } from "@/components/vitals/VitalsFilters";
 
 interface Vital {
   id: string;
@@ -18,7 +19,9 @@ interface Vital {
 
 export default function AllVitalsPage() {
   const [vitals, setVitals] = useState<Vital[]>([]);
+  const [filteredVitals, setFilteredVitals] = useState<Vital[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const vitalTypes = Array.from(new Set(vitals.map(vital => vital.type)));
 
   useEffect(() => {
     const fetchVitals = async () => {
@@ -29,6 +32,7 @@ export default function AllVitalsPage() {
         }
         const data = await response.json();
         setVitals(data);
+        setFilteredVitals(data);
       } catch (error) {
         console.error("Error fetching vitals:", error);
       } finally {
@@ -38,6 +42,17 @@ export default function AllVitalsPage() {
 
     fetchVitals();
   }, []);
+
+  const handleFilterChange = (filters: VitalsFiltersType) => {
+    const filtered = vitals.filter(vital => {
+      const vitalDate = new Date(vital.recordedAt);
+      const isInDateRange = vitalDate >= filters.dateRange.start && vitalDate <= filters.dateRange.end;
+      const isTypeMatched = filters.types.length === 0 || filters.types.includes(vital.type);
+      return isInDateRange && isTypeMatched;
+    });
+
+    setFilteredVitals(filtered);
+  };
 
   const getVitalIcon = (type: string) => {
     switch (type.toLowerCase()) {
@@ -88,17 +103,25 @@ export default function AllVitalsPage() {
           </p>
         </div>
 
-        {vitals.length === 0 ? (
+        {/* Filters Section */}
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 mb-8">
+          <VitalsFilters
+            vitalTypes={vitalTypes}
+            onFilterChange={handleFilterChange}
+          />
+        </div>
+
+        {filteredVitals.length === 0 ? (
           <Card className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700">
             <CardContent className="p-6">
               <p className="text-center text-gray-600 dark:text-gray-300">
-                No vitals recorded yet. Add your first vital to start tracking!
+                No vitals found for the selected filters. Try adjusting your filters or add new vitals.
               </p>
             </CardContent>
           </Card>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {vitals.map((vital) => (
+            {filteredVitals.map((vital) => (
               <Card
                 key={vital.id}
                 className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl hover:scale-[1.01] transition-all duration-300"
