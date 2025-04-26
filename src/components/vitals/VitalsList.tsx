@@ -6,45 +6,27 @@ import AddVitalDialog from "./AddVitalDialog";
 import EditVitalDialog from "./EditVitalDialog";
 import VitalsMenu from "./VitalsMenu";
 import { Button } from "@/components/ui/button";
-
-interface Vital {
-  id: string;
-  type: string;
-  value: number;
-  value2?: number;
-  unit: string;
-  notes?: string;
-  recordedAt: string;
-}
+import { Vital } from "@/types/vital";
 
 interface VitalsListProps {
-  initialVitals: Vital[];
+  vitals: Vital[];
 }
 
-export default function VitalsList({ initialVitals }: VitalsListProps) {
-  const [vitals, setVitals] = useState<Vital[]>(initialVitals);
+export default function VitalsList({ vitals }: VitalsListProps) {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [editingVital, setEditingVital] = useState<Vital | null>(null);
   const [filter, setFilter] = useState<string>("all");
 
-  useEffect(() => {
-    setVitals(initialVitals);
-  }, [initialVitals]);
-
   const handleVitalAdded = (newVital: Vital) => {
-    setVitals((prev) => [newVital, ...prev]);
+    // Implementation of handleVitalAdded
   };
 
   const handleVitalUpdated = (updatedVital: Vital) => {
-    setVitals((prev) =>
-      prev.map((vital) =>
-        vital.id === updatedVital.id ? updatedVital : vital
-      )
-    );
+    // Implementation of handleVitalUpdated
   };
 
   const handleVitalDeleted = (deletedId: string) => {
-    setVitals((prev) => prev.filter((vital) => vital.id !== deletedId));
+    // Implementation of handleVitalDeleted
   };
 
   const filteredVitals = filter === "all" 

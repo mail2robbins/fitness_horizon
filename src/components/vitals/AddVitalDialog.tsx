@@ -30,12 +30,12 @@ const vitalTypes = [
   { type: "Blood Sugar", unit: "mg/dL", hasSecondValue: false },
   { type: "Blood Pressure", unit: "mmHg", hasSecondValue: true },
   { type: "Heart Rate", unit: "bpm", hasSecondValue: false },
-  { type: "Weight", unit: "kg", hasSecondValue: false },
+  { type: "Weight", unit: "lbs", hasSecondValue: false },
   { type: "Body Fat", unit: "%", hasSecondValue: false },
-  { type: "Waist Circumference", unit: "cm", hasSecondValue: false },
+  { type: "Waist Circumference", unit: "in", hasSecondValue: false },
   { type: "Resting Heart Rate", unit: "bpm", hasSecondValue: false },
   { type: "Oxygen Saturation", unit: "%", hasSecondValue: false },
-  { type: "Temperature", unit: "°C", hasSecondValue: false },
+  { type: "Temperature", unit: "°F", hasSecondValue: false },
 ] as const;
 
 export default function AddVitalDialog({
