@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { Goal } from '@prisma/client';
 import { useTheme } from '@/components/ThemeProvider';
 import Link from 'next/link';
-import { EditGoalDialog } from '@/components/EditGoalDialog';
+import { EditGoalDialog } from '@/components/goals/EditGoalDialog';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Pencil, Trash2 } from 'lucide-react';
 import {
