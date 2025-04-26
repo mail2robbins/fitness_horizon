@@ -24,6 +24,7 @@ export default function Navbar() {
     { name: "Dashboard", href: "/dashboard" },
     { name: "Workouts", href: "/workouts" },
     { name: "Meals", href: "/meals" },
+    { name: "Vitals", href: "/vitals" },
     { name: "About", href: "/about" },
   ];
 

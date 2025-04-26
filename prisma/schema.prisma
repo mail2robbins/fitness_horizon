@@ -20,6 +20,7 @@ model User {
   profile       Profile?
   sessions      Session[]
   workouts      Workout[]
+  vitals        HealthVital[]
 }
 
 model Account {
@@ -110,4 +111,20 @@ model Goal {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model HealthVital {
+  id          String   @id @default(cuid())
+  userId      String
+  type        String   // BMI, BloodSugar, BloodPressure, etc.
+  value       Float    // The actual measurement value
+  value2      Float?   // For measurements that need two values (like blood pressure)
+  unit        String   // kg/m², mg/dL, mmHg, etc.
+  notes       String?
+  recordedAt  DateTime @default(now())
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([type])
+  @@index([recordedAt])
 }
