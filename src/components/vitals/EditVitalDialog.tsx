@@ -39,16 +39,16 @@ interface EditVitalDialogProps {
 }
 
 const vitalTypes = [
-  { type: "BMI", unit: "kg/m²", hasSecondValue: false },
-  { type: "Blood Sugar", unit: "mg/dL", hasSecondValue: false },
   { type: "Blood Pressure", unit: "mmHg", hasSecondValue: true },
-  { type: "Heart Rate", unit: "bpm", hasSecondValue: false },
-  { type: "Weight", unit: "lbs", hasSecondValue: false },
+  { type: "Blood Sugar", unit: "mg/dL", hasSecondValue: false },
+  { type: "BMI", unit: "kg/m²", hasSecondValue: false },
   { type: "Body Fat", unit: "%", hasSecondValue: false },
-  { type: "Waist Circumference", unit: "in", hasSecondValue: false },
-  { type: "Resting Heart Rate", unit: "bpm", hasSecondValue: false },
+  { type: "Heart Rate", unit: "bpm", hasSecondValue: false },
   { type: "Oxygen Saturation", unit: "%", hasSecondValue: false },
+  { type: "Resting Heart Rate", unit: "bpm", hasSecondValue: false },
   { type: "Temperature", unit: "°F", hasSecondValue: false },
+  { type: "Waist Circumference", unit: "in", hasSecondValue: false },
+  { type: "Weight", unit: "lbs", hasSecondValue: false },
 ] as const;
 
 export default function EditVitalDialog({
@@ -162,7 +162,7 @@ export default function EditVitalDialog({
           </DialogHeader>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="type" className="text-gray-700 dark:text-gray-300">
+              <Label htmlFor="type" className="text-gray-700 dark:text-gray-200">
                 Type
               </Label>
               <Select
@@ -170,7 +170,7 @@ export default function EditVitalDialog({
                 name="type"
                 value={formData.type}
                 onChange={handleInputChange}
-                className="w-full bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-blue-500 focus:border-transparent transition-colors"
               >
                 {vitalTypes.map((vt) => (
                   <option key={vt.type} value={vt.type}>
@@ -181,7 +181,7 @@ export default function EditVitalDialog({
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="value" className="text-gray-700 dark:text-gray-300">
+              <Label htmlFor="value" className="text-gray-700 dark:text-gray-200">
                 Value
               </Label>
               <Input
@@ -192,13 +192,13 @@ export default function EditVitalDialog({
                 onChange={handleInputChange}
                 step="0.1"
                 required
-                className="w-full bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-blue-500 focus:border-transparent transition-colors"
               />
             </div>
 
             {selectedVitalType?.hasSecondValue && (
               <div className="space-y-2">
-                <Label htmlFor="value2" className="text-gray-700 dark:text-gray-300">
+                <Label htmlFor="value2" className="text-gray-700 dark:text-gray-200">
                   Second Value
                 </Label>
                 <Input
@@ -209,13 +209,13 @@ export default function EditVitalDialog({
                   onChange={handleInputChange}
                   step="0.1"
                   required
-                  className="w-full bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                  className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-blue-500 focus:border-transparent transition-colors"
                 />
               </div>
             )}
 
             <div className="space-y-2">
-              <Label htmlFor="notes" className="text-gray-700 dark:text-gray-300">
+              <Label htmlFor="notes" className="text-gray-700 dark:text-gray-200">
                 Notes
               </Label>
               <Textarea
@@ -224,34 +224,34 @@ export default function EditVitalDialog({
                 value={formData.notes}
                 onChange={handleInputChange}
                 rows={3}
-                className="w-full bg-gray-50 dark:bg-gray-700 border-gray-200 dark:border-gray-600"
+                className="w-full bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-indigo-500 dark:focus:ring-blue-500 focus:border-transparent transition-colors resize-none"
               />
             </div>
 
-            <DialogFooter className="flex justify-between pt-4">
+            <DialogFooter className="flex flex-col sm:flex-row justify-between gap-2 sm:gap-0 pt-4">
               <Button
                 type="button"
                 variant="destructive"
                 onClick={() => setIsDeleteDialogOpen(true)}
                 disabled={isLoading}
-                className="bg-red-600 hover:bg-red-700 text-white"
+                className="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white"
               >
                 Delete
               </Button>
-              <div className="flex gap-2">
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <Button
                   type="button"
                   variant="outline"
                   onClick={onClose}
                   disabled={isLoading}
-                  className="border-gray-200 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="w-full sm:w-auto bg-white dark:bg-transparent border-gray-300 dark:border-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-800"
                 >
                   Cancel
                 </Button>
                 <Button
                   type="submit"
                   disabled={isLoading}
-                  className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 dark:from-indigo-500 dark:to-purple-500 text-white"
+                  className="w-full sm:w-auto bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-blue-600 dark:to-blue-600 text-white hover:from-indigo-700 hover:to-purple-700 dark:hover:bg-blue-700 transition-all duration-200"
                 >
                   {isLoading ? "Saving..." : "Save Changes"}
                 </Button>

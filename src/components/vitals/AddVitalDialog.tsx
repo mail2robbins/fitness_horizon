@@ -27,17 +27,17 @@ interface AddVitalDialogProps {
 }
 
 // Default vital types if none are provided
-const defaultVitalTypes = [
-  { type: "BMI", unit: "kg/m²", hasSecondValue: false },
-  { type: "Blood Sugar", unit: "mg/dL", hasSecondValue: false },
+export const defaultVitalTypes = [
   { type: "Blood Pressure", unit: "mmHg", hasSecondValue: true },
-  { type: "Heart Rate", unit: "bpm", hasSecondValue: false },
-  { type: "Weight", unit: "lbs", hasSecondValue: false },
+  { type: "Blood Sugar", unit: "mg/dL", hasSecondValue: false },
+  { type: "BMI", unit: "kg/m²", hasSecondValue: false },
   { type: "Body Fat", unit: "%", hasSecondValue: false },
-  { type: "Waist Circumference", unit: "in", hasSecondValue: false },
-  { type: "Resting Heart Rate", unit: "bpm", hasSecondValue: false },
+  { type: "Heart Rate", unit: "bpm", hasSecondValue: false },
   { type: "Oxygen Saturation", unit: "%", hasSecondValue: false },
+  { type: "Resting Heart Rate", unit: "bpm", hasSecondValue: false },
   { type: "Temperature", unit: "°F", hasSecondValue: false },
+  { type: "Waist Circumference", unit: "in", hasSecondValue: false },
+  { type: "Weight", unit: "lbs", hasSecondValue: false },
 ] as const;
 
 export default function AddVitalDialog({
@@ -65,10 +65,10 @@ export default function AddVitalDialog({
     unit: string;
     notes: string;
   }>({
-    type: vitalTypes[0].type,
+    type: vitalTypes.length > 0 ? vitalTypes[0].type : defaultVitalTypes[0].type,
     value: "",
     value2: "",
-    unit: vitalTypes[0].unit,
+    unit: vitalTypes.length > 0 ? vitalTypes[0].unit : defaultVitalTypes[0].unit,
     notes: "",
   });
 

@@ -8,6 +8,7 @@ import VitalsFilters, { VitalsFilters as VitalsFiltersType } from "./VitalsFilte
 import { Button } from "@/components/ui/button";
 import { Vital } from "@/types/vital";
 import { useRouter } from "next/navigation";
+import { defaultVitalTypes } from "./AddVitalDialog";
 
 interface VitalsListProps {
   vitals: Vital[];
@@ -198,7 +199,9 @@ export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
   };
 
   // Get unique vital types from the vitals data
-  const uniqueTypes = Array.from(new Set(vitals.map((vital) => vital.type)));
+  const uniqueTypes = vitals.length > 0 
+    ? Array.from(new Set(vitals.map((vital) => vital.type)))
+    : defaultVitalTypes.map(t => t.type);
 
   // Group vitals by date
   const vitalsByDate = filteredVitals.reduce((groups, vital) => {
