@@ -7,6 +7,7 @@ import MealFilters, { MealFilters as MealFiltersType } from "./MealFilters";
 import EditMealDialog from "./EditMealDialog";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
+import MealsChart from "./MealsChart";
 
 interface Meal {
   id: string;
@@ -172,6 +173,20 @@ export default function MealsList({ initialMeals }: MealsListProps) {
             </p>
           </div>
         </div>
+
+        {/* Charts for selected meal types (not daily) */}
+        {currentFilters && ["weekly", "monthly", "yearly", "custom", "all"].includes(currentFilters.period) && (
+          <div className="mb-12">
+            {(currentFilters.types.length > 0 ? currentFilters.types : mealTypes).map((type) => (
+              <MealsChart
+                key={type}
+                mealType={type}
+                data={filteredMeals}
+                dateRange={currentFilters.dateRange}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Meals List */}
         <div className="space-y-8">
