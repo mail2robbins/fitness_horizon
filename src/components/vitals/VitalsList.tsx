@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Vital } from "@/types/vital";
 import { useRouter } from "next/navigation";
 import { defaultVitalTypes } from "./AddVitalDialog";
+import VitalsChart from "./VitalsChart";
 
 interface VitalsListProps {
   vitals: Vital[];
@@ -267,6 +268,20 @@ export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
             </p>
           </div>
         </div>
+
+        {/* Charts for selected vital types (not daily) */}
+        {currentFilters && ["weekly", "monthly", "yearly", "custom", "all"].includes(currentFilters.period) && (
+          <div className="mb-12">
+            {(currentFilters.types.length > 0 ? currentFilters.types : uniqueTypes).map((type) => (
+              <VitalsChart
+                key={type}
+                vitalType={type}
+                data={filteredVitals}
+                dateRange={currentFilters.dateRange}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Vitals List */}
         <div className="space-y-8">
