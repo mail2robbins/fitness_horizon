@@ -8,6 +8,7 @@ import EditWorkoutDialog from "./EditWorkoutDialog";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import { startOfDay, endOfDay } from "date-fns";
+import WorkoutsChart from "./WorkoutsChart";
 
 interface Workout {
   id: string;
@@ -167,6 +168,20 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
             </p>
           </div>
         </div>
+
+        {/* Charts for selected workout types (not daily) */}
+        {currentFilters && ["weekly", "monthly", "yearly", "custom", "all"].includes(currentFilters.period) && (
+          <div className="mb-12">
+            {(currentFilters.types.length > 0 ? currentFilters.types : workoutTypes).map((type) => (
+              <WorkoutsChart
+                key={type}
+                workoutType={type}
+                data={filteredWorkouts}
+                dateRange={currentFilters.dateRange}
+              />
+            ))}
+          </div>
+        )}
 
         {/* Workouts List */}
         <div className="space-y-8">
