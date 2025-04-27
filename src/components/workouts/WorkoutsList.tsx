@@ -7,6 +7,7 @@ import WorkoutFilters, { WorkoutFilters as WorkoutFiltersType } from "./WorkoutF
 import EditWorkoutDialog from "./EditWorkoutDialog";
 import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
+import { startOfDay, endOfDay } from "date-fns";
 
 interface Workout {
   id: string;
@@ -26,13 +27,28 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
   const [filteredWorkouts, setFilteredWorkouts] = useState(initialWorkouts);
   const [selectedWorkout, setSelectedWorkout] = useState<Workout | null>(null);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [currentFilters, setCurrentFilters] = useState<WorkoutFiltersType | null>(null);
+  const [currentFilters, setCurrentFilters] = useState<WorkoutFiltersType | null>({
+    dateRange: { start: startOfDay(new Date()), end: endOfDay(new Date()) },
+    types: [],
+    period: 'daily',
+  });
   const workoutTypes = Array.from(new Set(workouts.map(workout => workout.type)));
 
-  // Update the workouts list when initialWorkouts changes
+  // On mount and when initialWorkouts changes, apply the daily filter
   useEffect(() => {
     setWorkouts(initialWorkouts);
-    setFilteredWorkouts(initialWorkouts);
+    const start = startOfDay(new Date());
+    const end = endOfDay(new Date());
+    const filtered = (initialWorkouts as Workout[]).filter((workout: Workout) => {
+      const workoutDate = new Date(workout.completedAt);
+      return workoutDate >= start && workoutDate <= end;
+    });
+    setFilteredWorkouts(filtered);
+    setCurrentFilters({
+      dateRange: { start, end },
+      types: [],
+      period: 'daily',
+    });
   }, [initialWorkouts]);
 
   const handleFilterChange = (filters: WorkoutFiltersType) => {

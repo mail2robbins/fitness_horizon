@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { format } from "date-fns";
+import { format, startOfDay, endOfDay } from "date-fns";
 import MealFilters, { MealFilters as MealFiltersType } from "./MealFilters";
 import EditMealDialog from "./EditMealDialog";
 import { Button } from "@/components/ui/button";
@@ -32,10 +32,21 @@ export default function MealsList({ initialMeals }: MealsListProps) {
   const [currentFilters, setCurrentFilters] = useState<MealFiltersType | null>(null);
   const mealTypes = Array.from(new Set(meals.map(meal => meal.type)));
 
-  // Update the meals list when initialMeals changes
+  // On mount and when initialMeals changes, apply the daily filter
   useEffect(() => {
     setMeals(initialMeals);
-    setFilteredMeals(initialMeals);
+    const start = startOfDay(new Date());
+    const end = endOfDay(new Date());
+    const filtered = (initialMeals as Meal[]).filter((meal: Meal) => {
+      const mealDate = new Date(meal.consumedAt);
+      return mealDate >= start && mealDate <= end;
+    });
+    setFilteredMeals(filtered);
+    setCurrentFilters({
+      dateRange: { start, end },
+      types: [],
+      period: 'daily',
+    });
   }, [initialMeals]);
 
   const handleFilterChange = (filters: MealFiltersType) => {

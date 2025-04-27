@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { format, subDays, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
+import { format, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
 
 interface WorkoutFiltersProps {
   workoutTypes: string[];
