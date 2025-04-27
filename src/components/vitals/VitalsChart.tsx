@@ -40,18 +40,19 @@ export default function VitalsChart({ vitalType, data, dateRange }: VitalsChartP
           <XAxis
             dataKey="date"
             stroke={resolvedTheme === 'dark' ? '#fff' : '#333'}
-            tick={{ fill: resolvedTheme === 'dark' ? '#fff' : '#333', fontSize: 12 }}
+            tick={{ fill: resolvedTheme === 'dark' ? '#fff' : '#333', fontSize: 12, style: { color: resolvedTheme === 'dark' ? '#fff' : '#333' } }}
             label={{
               value: 'Date',
               position: 'insideBottom',
               offset: -5,
               fill: resolvedTheme === 'dark' ? '#fff' : '#333',
               fontSize: 14,
+              style: { color: resolvedTheme === 'dark' ? '#fff' : '#333' }
             }}
           />
           <YAxis
             stroke={resolvedTheme === 'dark' ? '#fff' : '#333'}
-            tick={{ fill: resolvedTheme === 'dark' ? '#fff' : '#333', fontSize: 12 }}
+            tick={{ fill: resolvedTheme === 'dark' ? '#fff' : '#333', fontSize: 12, style: { color: resolvedTheme === 'dark' ? '#fff' : '#333' } }}
             label={{
               value: 'Value',
               angle: -90,
@@ -59,6 +60,7 @@ export default function VitalsChart({ vitalType, data, dateRange }: VitalsChartP
               fill: resolvedTheme === 'dark' ? '#fff' : '#333',
               fontSize: 14,
               dx: -10,
+              style: { color: resolvedTheme === 'dark' ? '#fff' : '#333' }
             }}
           />
           <Tooltip contentStyle={{ background: resolvedTheme === 'dark' ? '#222' : '#fff', color: resolvedTheme === 'dark' ? '#fff' : '#333' }} />
