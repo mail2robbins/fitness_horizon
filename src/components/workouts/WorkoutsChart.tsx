@@ -17,7 +17,7 @@ interface WorkoutsChartProps {
 }
 
 export default function WorkoutsChart({ workoutType, data, dateRange }: WorkoutsChartProps) {
-  const { resolvedTheme } = useTheme ? useTheme() : { resolvedTheme: 'light' };
+  const { resolvedTheme } = useTheme();
 
   // Prepare chart data: sort by date, format date for X axis
   const chartData = data
