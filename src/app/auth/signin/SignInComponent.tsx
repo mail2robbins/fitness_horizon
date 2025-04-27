@@ -3,6 +3,8 @@
 import { signIn } from "next-auth/react";
 import Image from "next/image";
 import type { ClientSafeProvider } from "next-auth/react";
+import { FcGoogle } from "react-icons/fc";
+import { FaGithub } from "react-icons/fa";
 
 interface SignInComponentProps {
   providers: Record<string, ClientSafeProvider>;
@@ -19,22 +21,10 @@ export default function SignInComponent({ providers }: SignInComponentProps) {
           >
             <span className="absolute inset-y-0 left-0 flex items-center pl-6">
               {provider.name === "Google" && (
-                <Image
-                  src="/google.svg"
-                  alt="Google"
-                  width={24}
-                  height={24}
-                  className="h-6 w-6 filter dark:invert"
-                />
+                <FcGoogle className="h-6 w-6" />
               )}
               {provider.name === "GitHub" && (
-                <Image
-                  src="/github.svg"
-                  alt="GitHub"
-                  width={24}
-                  height={24}
-                  className="h-6 w-6 filter dark:invert"
-                />
+                <FaGithub className="h-6 w-6 text-white dark:text-gray-200" />
               )}
             </span>
             Sign in with {provider.name}
