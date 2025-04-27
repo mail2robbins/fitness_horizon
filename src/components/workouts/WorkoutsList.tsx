@@ -133,7 +133,7 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
         {/* Log New Workout Button */}
         <div className="flex justify-center mb-8">
           <Link
-            href="/workouts/new"
+            href="/workouts/log"
             className="inline-flex items-center px-8 py-4 border border-transparent text-base font-medium rounded-xl shadow-lg text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 dark:from-indigo-500 dark:to-purple-500 dark:hover:from-indigo-600 dark:hover:to-purple-600 transition-all duration-300"
           >
             Log New Workout
