@@ -50,6 +50,12 @@ export default async function DashboardPage() {
     _sum: { caloriesBurned: true },
   });
 
+  // Calculate total calories consumed from meals
+  const totalCaloriesConsumed = await prisma.meal.aggregate({
+    where: { userId: user.id },
+    _sum: { calories: true },
+  });
+
   // Get the start and end dates for the last 7 days
   const endDate = endOfDay(new Date());
   const startDate = startOfDay(new Date(Date.now() - 7 * 24 * 60 * 60 * 1000));
@@ -104,6 +110,7 @@ export default async function DashboardPage() {
           user={user}
           totalWorkouts={totalWorkouts}
           totalCalories={totalCalories._sum.caloriesBurned || 0}
+          totalCaloriesConsumed={totalCaloriesConsumed._sum.calories || 0}
           workoutsByDay={workoutsByDay}
         />
       </div>

@@ -76,10 +76,17 @@ interface DashboardWrapperProps {
   user: User;
   totalWorkouts: number;
   totalCalories: number;
+  totalCaloriesConsumed: number;
   workoutsByDay: WorkoutByDay[];
 }
 
-export default function DashboardWrapper({ user, totalWorkouts, totalCalories, workoutsByDay }: DashboardWrapperProps) {
+export default function DashboardWrapper({ 
+  user, 
+  totalWorkouts, 
+  totalCalories, 
+  totalCaloriesConsumed,
+  workoutsByDay 
+}: DashboardWrapperProps) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -101,7 +108,7 @@ export default function DashboardWrapper({ user, totalWorkouts, totalCalories, w
         <DashboardStats
           totalWorkouts={totalWorkouts}
           totalCaloriesBurned={totalCalories}
-          totalCaloriesConsumed={0} // TODO: Add actual calories consumed
+          totalCaloriesConsumed={totalCaloriesConsumed}
           streak={user.profile?.streakDays}
         />
       </div>
