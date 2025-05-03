@@ -59,12 +59,12 @@ export async function POST(request: Request) {
 
     // If user didn't work out yesterday, reset streak
     let streakDays = profile?.streakDays || 0;
-    if (yesterdayWorkouts === 0 && streakDays > 0) {
+    if (yesterdayWorkouts === 0) {
       streakDays = 0;
     }
 
-    // If this is the first workout today, increment streak
-    if (todayWorkouts === 0) {
+    // If this is the first workout today and user worked out yesterday, increment streak
+    if (todayWorkouts === 0 && yesterdayWorkouts > 0) {
       streakDays += 1;
     }
 
