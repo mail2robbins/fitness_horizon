@@ -93,6 +93,16 @@ export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
       types: [],
       period: 'daily',
     });
+
+    // Save the default daily filter to localStorage
+    localStorage.setItem('vitalsFilters', JSON.stringify({
+      dateRange: {
+        start: startOfToday.toISOString(),
+        end: endOfToday.toISOString(),
+      },
+      types: [],
+      period: 'daily',
+    }));
   };
 
   const handleVitalAdded = (newVital: Partial<Vital>) => {
