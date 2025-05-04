@@ -125,8 +125,10 @@ export default function ActivityChart({ workouts }: ActivityChartProps) {
       <h3 className="text-xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 mb-6">
         Activity Overview
       </h3>
-      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-100 dark:border-gray-700">
-        <Bar options={options} data={chartData} />
+      <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-4 sm:p-8 shadow-lg border border-gray-100 dark:border-gray-700 min-h-[260px] sm:min-h-[340px] flex items-center">
+        <div className="w-full h-[220px] sm:h-[300px]">
+          <Bar options={options} data={chartData} height={220} />
+        </div>
       </div>
     </div>
   );
