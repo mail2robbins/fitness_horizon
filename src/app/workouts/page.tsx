@@ -8,6 +8,7 @@ import { authOptions } from "@/lib/auth";
 import WorkoutsWrapper from "@/components/workouts/WorkoutsWrapper";
 import Link from "next/link";
 import { format } from "date-fns";
+import { formatLocalTime } from '@/utils/dateUtils';
 
 export default async function WorkoutsPage() {
   const session = await getServerSession(authOptions);
@@ -110,7 +111,7 @@ export default async function WorkoutsPage() {
                     {workouts.map((workout) => (
                       <tr key={workout.id} className="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                          {format(new Date(workout.completedAt), 'h:mm a')}
+                          {formatLocalTime(workout.completedAt.toString())}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">
                           {workout.type}

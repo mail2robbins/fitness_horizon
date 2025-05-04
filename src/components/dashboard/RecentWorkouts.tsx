@@ -5,18 +5,20 @@ import Link from "next/link";
 import type { Workout } from "@prisma/client";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { formatLocalDateTime } from '@/utils/dateUtils';
 
 export default function RecentWorkouts({ workouts }: { workouts: Workout[] }) {
   const router = useRouter();
 
-  // Refresh the component data periodically
   useEffect(() => {
-    // Refresh data every minute
-    const interval = setInterval(() => {
-      router.refresh();
-    }, 60000);
+    const handleKeyPress = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        router.back();
+      }
+    };
 
-    return () => clearInterval(interval);
+    window.addEventListener("keydown", handleKeyPress);
+    return () => window.removeEventListener("keydown", handleKeyPress);
   }, [router]);
 
   if (workouts.length === 0) {
@@ -55,27 +57,35 @@ export default function RecentWorkouts({ workouts }: { workouts: Workout[] }) {
       </div>
 
       <div className="space-y-4">
-        {workouts.map((workout: Workout) => (
+        {workouts.map((workout) => (
           <div
             key={workout.id}
-            className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-gray-100 dark:border-gray-700 hover:shadow-xl transition-shadow duration-300"
+            className="flex items-center justify-between p-4 bg-white dark:bg-gray-800 rounded-lg shadow"
           >
-            <div className="flex justify-between items-start">
-              <div>
-                <h3 className="font-semibold text-gray-900 dark:text-white">
-                  {workout.type} Workout
-                </h3>
-                {workout.notes && (
-                  <p className="text-sm text-gray-600 dark:text-gray-300 mt-1">{workout.notes}</p>
-                )}
+            <div className="flex items-center space-x-4">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
+                  <span className="text-indigo-600 dark:text-indigo-300 font-semibold">
+                    {workout.type.charAt(0)}
+                  </span>
+                </div>
               </div>
-              <span className="text-sm text-gray-600 dark:text-gray-300">
-                {format(new Date(workout.completedAt), "MMM d")}
-              </span>
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {workout.type}
+                </h3>
+                <span className="text-sm text-gray-600 dark:text-gray-300">
+                  {formatLocalDateTime(workout.completedAt.toString())}
+                </span>
+              </div>
             </div>
-            <div className="mt-3 flex gap-4 text-sm">
-              <span className="text-indigo-600 dark:text-indigo-400">{workout.duration} min</span>
-              <span className="text-emerald-600 dark:text-emerald-400">{workout.caloriesBurned} calories</span>
+            <div className="text-right">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                {workout.duration} min
+              </p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                {workout.caloriesBurned} cal
+              </p>
             </div>
           </div>
         ))}

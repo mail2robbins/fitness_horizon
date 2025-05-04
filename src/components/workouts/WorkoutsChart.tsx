@@ -1,5 +1,6 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid, Legend } from 'recharts';
 import { useTheme } from 'next-themes';
+import { formatLocalDate } from '@/utils/dateUtils';
 
 interface Workout {
   id: string;
@@ -24,7 +25,7 @@ export default function WorkoutsChart({ workoutType, data, dateRange }: Workouts
     .filter(w => w.type === workoutType)
     .map(w => ({
       ...w,
-      date: new Date(w.completedAt).toLocaleDateString(),
+      date: formatLocalDate(w.completedAt),
     }))
     .sort((a, b) => new Date(a.completedAt).getTime() - new Date(b.completedAt).getTime());
 

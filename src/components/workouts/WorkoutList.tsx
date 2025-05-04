@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import { Workout } from "@prisma/client";
 import Link from "next/link";
+import { formatLocalDateVerbose } from '@/utils/dateUtils';
 
 interface WorkoutListProps {
   workouts: Workout[];
@@ -24,34 +25,34 @@ export default function WorkoutList({ workouts }: WorkoutListProps) {
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="space-y-4">
       {workouts.map((workout) => (
-        <div
+        <Link
           key={workout.id}
-          className="bg-white p-6 rounded-lg shadow hover:shadow-md transition-shadow"
+          href={`/workouts/${workout.id}`}
+          className="block bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-md transition-shadow duration-200"
         >
-          <div className="flex justify-between items-start mb-4">
-            <div>
-              <h2 className="text-xl font-semibold capitalize">
-                {workout.type}
-              </h2>
-              <p className="text-gray-500">
-                {format(new Date(workout.completedAt), "PPP")}
-              </p>
-            </div>
-            <div className="text-right">
-              <p className="font-semibold">{workout.duration} minutes</p>
-              <p className="text-gray-500">{workout.caloriesBurned} calories</p>
+          <div className="p-4">
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
+                  {workout.type}
+                </h2>
+                <p className="text-gray-500">
+                  {formatLocalDateVerbose(workout.completedAt.toString())}
+                </p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">
+                  Duration: {workout.duration} min
+                </p>
+                <p className="text-sm text-gray-500">
+                  Calories: {workout.caloriesBurned}
+                </p>
+              </div>
             </div>
           </div>
-
-          {workout.notes && (
-            <div>
-              <h3 className="font-medium mb-2">Notes:</h3>
-              <p className="text-gray-600">{workout.notes}</p>
-            </div>
-          )}
-        </div>
+        </Link>
       ))}
     </div>
   );

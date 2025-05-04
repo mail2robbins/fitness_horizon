@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil } from "lucide-react";
 import { startOfDay, endOfDay } from "date-fns";
 import WorkoutsChart from "./WorkoutsChart";
+import { formatLocalDate, formatLocalTime } from "@/utils/dateUtils";
 
 interface Workout {
   id: string;
@@ -103,7 +104,7 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
 
   // Group workouts by date
   const workoutsByDate = filteredWorkouts.reduce((groups, workout) => {
-    const date = format(new Date(workout.completedAt), "MMM d, yyyy");
+    const date = formatLocalDate(workout.completedAt);
     if (!groups[date]) {
       groups[date] = [];
     }
@@ -269,7 +270,7 @@ export default function WorkoutsList({ initialWorkouts }: WorkoutsListProps) {
                                 ? "text-indigo-700 dark:text-indigo-400"
                                 : "text-gray-900 dark:text-white"
                             }`}>
-                              {format(new Date(workout.completedAt), "h:mm a")}
+                              {formatLocalTime(workout.completedAt)}
                             </p>
                           </div>
                         </div>
