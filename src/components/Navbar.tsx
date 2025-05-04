@@ -17,7 +17,8 @@ function classNames(...classes: string[]) {
 export default function Navbar() {
   const { data: session } = useSession();
   const pathname = usePathname();
-  const { theme } = useTheme();
+  const { theme, systemTheme } = useTheme();
+  const isDark = theme === "dark" || (theme === "system" && systemTheme === "dark");
 
   const navigation = [
     { name: "Features", href: "/features" },
@@ -30,7 +31,7 @@ export default function Navbar() {
 
   const isActive = (path: string) => pathname === path;
 
-  const navbarBackground = theme === 'dark' 
+  const navbarBackground = isDark 
     ? 'bg-gradient-to-r from-indigo-900 via-purple-900 to-gray-900'
     : 'bg-gradient-to-r from-indigo-100 via-purple-100 to-pink-100';
 
