@@ -67,7 +67,7 @@ export default function ActivityChart({ workouts }: ActivityChartProps) {
       legend: {
         position: 'top' as const,
         labels: {
-          color: isDark ? '#e5e7eb' : '#1f2937',
+          color: isDark ? '#fff' : '#1f2937',
           font: {
             size: 14,
             weight: 'bold' as const,
@@ -77,11 +77,18 @@ export default function ActivityChart({ workouts }: ActivityChartProps) {
       title: {
         display: true,
         text: 'Workout Activity (Last 7 Days)',
-        color: isDark ? '#e5e7eb' : '#1f2937',
+        color: isDark ? '#fff' : '#1f2937',
         font: {
           size: 16,
           weight: 'bold' as const,
         },
+      },
+      tooltip: {
+        backgroundColor: isDark ? '#22223b' : '#fff',
+        titleColor: isDark ? '#fff' : '#1f2937',
+        bodyColor: isDark ? '#fff' : '#1f2937',
+        borderColor: isDark ? '#fff' : '#1f2937',
+        borderWidth: 1,
       },
     },
     scales: {
@@ -89,7 +96,7 @@ export default function ActivityChart({ workouts }: ActivityChartProps) {
         beginAtZero: true,
         ticks: {
           stepSize: 1,
-          color: isDark ? '#9ca3af' : '#4b5563',
+          color: isDark ? '#e5e7eb' : '#4b5563',
           font: {
             size: 12,
           },
@@ -100,7 +107,7 @@ export default function ActivityChart({ workouts }: ActivityChartProps) {
       },
       x: {
         ticks: {
-          color: isDark ? '#9ca3af' : '#4b5563',
+          color: isDark ? '#e5e7eb' : '#4b5563',
           font: {
             size: 12,
           },
