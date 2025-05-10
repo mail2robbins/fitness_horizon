@@ -13,10 +13,10 @@ export default async function Home() {
       <div className="relative isolate px-6 lg:px-8">
         <div className="mx-auto max-w-2xl py-16 sm:py-24 lg:py-32">
           <div className="text-center">
-            <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 sm:text-6xl">
+            <h1 className="text-4xl pb-2 leading-tight font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400 sm:text-6xl">
               Transform Your Health Journey
             </h1>
-            <p className="mt-6 text-lg leading-8 text-gray-600 dark:text-gray-300">
+            <p className="mt-1 text-lg leading-8 text-gray-600 dark:text-gray-300">
               Track your workouts, monitor your nutrition, and achieve your fitness
               goals with our comprehensive health and fitness platform.
             </p>

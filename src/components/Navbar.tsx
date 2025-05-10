@@ -29,7 +29,13 @@ export default function Navbar() {
     { name: "About", href: "/about" },
   ];
 
-  const isActive = (path: string) => pathname === path;
+  const isActive = (path: string) => isPathOrSubUri(pathname , path);
+
+  function isPathOrSubUri(pathnameParam: string, pathParam: string) {
+    // Remove trailing slash for consistency (except for root)
+    const base = pathParam.endsWith('/') && pathParam !== '/' ? pathParam.slice(0, -1) : pathParam;
+    return pathnameParam === base || pathnameParam.startsWith(base + '/');
+  }
 
   const navbarBackground = isDark 
     ? 'bg-gradient-to-r from-indigo-900 via-purple-900 to-gray-900'
