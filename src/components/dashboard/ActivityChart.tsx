@@ -13,6 +13,7 @@ import {
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
 import { useTheme } from "@/components/ThemeProvider";
+import { formatLocalDate } from "@/utils/dateUtils";
 
 ChartJS.register(
   CategoryScale,
@@ -41,7 +42,7 @@ export default function ActivityChart({ workouts }: ActivityChartProps) {
     if (workouts.length === 0) return;
 
     const data = {
-      labels: workouts.map(workout => workout.date),
+      labels: workouts.map(workout => formatLocalDate(workout.date)),
       datasets: [
         {
           label: 'Workouts',

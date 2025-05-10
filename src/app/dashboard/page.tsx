@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import DashboardWrapper from "@/components/dashboard/DashboardWrapper";
 import { format, startOfDay, endOfDay } from "date-fns";
+import { formatLocalDate } from "@/utils/dateUtils";
 
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
@@ -78,13 +79,13 @@ export default async function DashboardPage() {
   const dateMap = new Map<string, number>();
   let currentDate = startDate;
   while (currentDate <= endDate) {
-    dateMap.set(format(currentDate, 'yyyy-MM-dd'), 0);
+    dateMap.set(formatLocalDate(currentDate.toISOString()), 0);
     currentDate = new Date(currentDate.getTime() + 24 * 60 * 60 * 1000);
   }
 
   // Group workouts by date and count them
   workouts.forEach(workout => {
-    const date = format(workout.completedAt, 'yyyy-MM-dd');
+    const date = formatLocalDate(workout.completedAt.toISOString());
     dateMap.set(date, (dateMap.get(date) || 0) + 1);
   });
 
