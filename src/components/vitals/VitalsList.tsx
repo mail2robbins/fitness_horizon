@@ -50,16 +50,16 @@ export default function VitalsList({ vitals: initialVitals }: VitalsListProps) {
         // Filter by date range
         filtered = filtered.filter(vital => {
           const vitalDate = new Date(vital.recordedAt);
-          return vitalDate >= parsedFilters.dateRange.start && vitalDate <= parsedFilters.dateRange.end;
+          return vitalDate >= currentFilters.dateRange.start && vitalDate <= currentFilters.dateRange.end;
         });
 
         // Filter by vital types if any are selected
-        if (parsedFilters.types.length > 0) {
-          filtered = filtered.filter(vital => parsedFilters.types.includes(vital.type));
+        if (currentFilters.types.length > 0) {
+          filtered = filtered.filter(vital => currentFilters.types.includes(vital.type));
         }
 
         setFilteredVitals(filtered);
-        setCurrentFilters(parsedFilters);
+        setCurrentFilters(currentFilters);
       } catch (error) {
         console.error('Error parsing saved filters:', error);
         // Fall back to default daily filter if there's an error
