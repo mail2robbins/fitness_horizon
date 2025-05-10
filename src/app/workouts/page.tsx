@@ -32,7 +32,7 @@ export default async function WorkoutsPage() {
       userId: session.user.id,
       completedAt: {
         gte: today,
-        lt: tomorrow,
+        lte: tomorrow,
       },
     },
     orderBy: { completedAt: "desc" },

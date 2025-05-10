@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401, headers: { 'Cache-Control': 'no-store, max-age=0' } });
     }
 
     const body = await request.json();
@@ -18,7 +18,7 @@ export async function POST(request: Request) {
 
     // Validate required fields
     if (!type || !duration || !caloriesBurned) {
-      return new NextResponse("Missing required fields", { status: 400 });
+      return new NextResponse("Missing required fields", { status: 400, headers: { 'Cache-Control': 'no-store, max-age=0' } });
     }
 
     // Get user's profile
@@ -94,10 +94,13 @@ export async function POST(request: Request) {
     revalidatePath('/dashboard');
     revalidatePath('/workouts');
 
-    return NextResponse.json(workout);
+    return new NextResponse(JSON.stringify(workout), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store, max-age=0' },
+    });
   } catch (error) {
     //console.error("Error creating workout:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return new NextResponse("Internal Server Error", { status: 500, headers: { 'Cache-Control': 'no-store, max-age=0' } });
   }
 }
 
@@ -106,7 +109,7 @@ export async function GET() {
     const session = await getServerSession(authOptions);
 
     if (!session?.user?.id) {
-      return new NextResponse("Unauthorized", { status: 401 });
+      return new NextResponse("Unauthorized", { status: 401, headers: { 'Cache-Control': 'no-store, max-age=0' } });
     }
 
     const workouts = await prisma.workout.findMany({
@@ -114,9 +117,12 @@ export async function GET() {
       orderBy: { completedAt: "desc" },
     });
 
-    return NextResponse.json(workouts);
+    return new NextResponse(JSON.stringify(workouts), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store, max-age=0' },
+    });
   } catch (error) {
     //console.error("Error fetching workouts:", error);
-    return new NextResponse("Internal Server Error", { status: 500 });
+    return new NextResponse("Internal Server Error", { status: 500, headers: { 'Cache-Control': 'no-store, max-age=0' } });
   }
 } 
