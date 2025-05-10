@@ -78,6 +78,7 @@ interface DashboardWrapperProps {
   totalCalories: number;
   totalCaloriesConsumed: number;
   workoutsByDay: WorkoutByDay[];
+  streak: number;
 }
 
 export default function DashboardWrapper({ 
@@ -85,7 +86,8 @@ export default function DashboardWrapper({
   totalWorkouts, 
   totalCalories, 
   totalCaloriesConsumed,
-  workoutsByDay 
+  workoutsByDay,
+  streak
 }: DashboardWrapperProps) {
   const [isLoading, setIsLoading] = useState(true);
 
@@ -109,7 +111,7 @@ export default function DashboardWrapper({
           totalWorkouts={totalWorkouts}
           totalCaloriesBurned={totalCalories}
           totalCaloriesConsumed={totalCaloriesConsumed}
-          streak={user.profile?.streakDays}
+          streak={streak}
         />
       </div>
 

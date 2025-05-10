@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
 import { authOptions } from "@/lib/auth";
 import DashboardWrapper from "@/components/dashboard/DashboardWrapper";
-import { format, startOfDay, endOfDay } from "date-fns";
+import { format, startOfDay, endOfDay, differenceInCalendarDays } from "date-fns";
 import { formatLocalDate } from "@/utils/dateUtils";
 
 export default async function DashboardPage() {
@@ -95,6 +95,41 @@ export default async function DashboardPage() {
     count,
   }));
 
+  // Fetch all workouts for streak calculation
+  const allWorkouts = await prisma.workout.findMany({
+    where: { userId: user.id },
+    orderBy: { completedAt: "desc" },
+    select: { completedAt: true },
+  });
+
+  // Dynamic streak calculation
+  function calculateStreak(workouts: { completedAt: Date }[]): number {
+    if (workouts.length === 0) return 0;
+    // Convert to local date strings and sort descending
+    const dates = workouts
+      .map(w => {
+        const d = new Date(w.completedAt);
+        return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      })
+      .sort((a, b) => b.getTime() - a.getTime());
+    let streak = 1;
+    for (let i = 1; i < dates.length; i++) {
+      const diff = differenceInCalendarDays(dates[i - 1], dates[i]);
+      if (diff === 1) {
+        streak++;
+      } else if (diff > 1) {
+        break;
+      }
+    }
+    // Check if the most recent workout is today; if not, streak is 0
+    const today = new Date();
+    const mostRecent = dates[0];
+    if (differenceInCalendarDays(today, mostRecent) !== 0) return 0;
+    return streak;
+  }
+
+  const currentStreak = calculateStreak(allWorkouts);
+
   return (
     <div className="bg-gradient-to-b from-indigo-100 via-purple-100 to-pink-100 dark:from-gray-900 dark:to-indigo-900/20 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -113,6 +148,7 @@ export default async function DashboardPage() {
           totalCalories={totalCalories._sum.caloriesBurned || 0}
           totalCaloriesConsumed={totalCaloriesConsumed._sum.calories || 0}
           workoutsByDay={workoutsByDay}
+          streak={currentStreak}
         />
       </div>
     </div>
