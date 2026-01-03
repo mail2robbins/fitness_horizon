@@ -1,4 +1,4 @@
-import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import SignInComponent from "./SignInComponent";
@@ -9,12 +9,7 @@ export default async function SignIn() {
   
   // Redirect if already signed in
   if (session) {
-    return {
-      redirect: {
-        destination: "/",
-        permanent: false,
-      },
-    };
+    redirect("/");
   }
 
   // Get providers from auth options directly

@@ -5,7 +5,7 @@ import prisma from "@/lib/prisma";
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -26,10 +26,12 @@ export async function PUT(
       return new NextResponse("Invalid numeric values", { status: 400 });
     }
 
+    const { id } = await params;
+
     // Update the vital record
     const updatedVital = await prisma.healthVital.update({
       where: {
-        id: params.id,
+        id,
         userId: session.user.id,
       },
       data: {
@@ -50,7 +52,7 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
@@ -58,10 +60,12 @@ export async function DELETE(
       return new NextResponse("Unauthorized", { status: 401 });
     }
 
+    const { id } = await params;
+
     // Delete the vital record
     await prisma.healthVital.delete({
       where: {
-        id: params.id,
+        id,
         userId: session.user.id,
       },
     });
